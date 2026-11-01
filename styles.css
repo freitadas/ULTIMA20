@@ -144,3 +144,27 @@
 .cinema-scenery:not(.tone-hospital):not(.tone-road):not(.tone-street):not(.tone-industrial):not(.tone-shelter):not(.tone-laboratory):not(.tone-siege):not(.tone-tower):not(.tone-school):not(.tone-memory) span:nth-child(3){right:12%;bottom:36%;width:24%;height:24%;background:#2b3637}
 .memory-film-label{position:absolute;z-index:3;right:18px;top:16px;padding:8px 12px;border:1px solid #e0c28b7a;background:#2c1f18cf;color:#f1d4a2;font-size:10px;letter-spacing:1.8px;font-weight:900;text-transform:uppercase}
 @media(max-width:740px){.modal:has(.cinema-stage){width:min(100%,100%);padding:10px}.cinema-stage{min-height:76vh}.cinema-character-layer{padding:54px 10px 170px}.cinema-portrait{width:42%;min-width:0}.cinema-portrait-meta strong{font-size:11px}.cinema-portrait-meta small{font-size:9px}.cinema-caption{padding:24px 16px 20px}.modal .cinema-dialogue{font-size:18px;min-height:94px}.cinema-presence span{font-size:9px;padding:6px 8px}.cinema-location,.memory-film-label{font-size:9px;padding:8px 9px;max-width:42vw}.cinema-portrait-tag{width:28px;height:28px;font-size:10px}}
+
+
+/* V11.2 — cenas ilustradas: a imagem não contém UI/texto embutido; texto e controles continuam dinâmicos. */
+.cinema-stage.has-scene-art{background:#080e0f;min-height:min(560px,74vh)}
+.cinema-stage.has-scene-art .cinema-backdrop{display:none}
+.cinema-art-wrap{position:absolute;z-index:1;inset:0 0 20%;overflow:hidden;background:linear-gradient(160deg,#26342c,#0a1216)}
+.cinema-art-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#00000000 65%,#05090ad9 100%);pointer-events:none}
+.cinema-art{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 20%;animation:cinema-art-enter .5s ease-out both}
+.cinema-stage.has-scene-art .cinema-caption{align-self:end;z-index:4;background:linear-gradient(180deg,#040809cc,#030709f4 18%,#05090afb 100%);padding:20px clamp(18px,4vw,38px) 22px;border:1px solid #b44b4d9c;box-shadow:0 -8px 32px #0506099e}
+.cinema-stage.has-scene-art .cinema-speaker{font-size:14px;color:#f5d2c6;letter-spacing:1.4px}
+.cinema-stage.has-scene-art .cinema-kicker{margin-bottom:9px;color:#e2c7b8}
+.cinema-stage.has-scene-art .cinema-dialogue{font-size:clamp(18px,2.55vw,23px);min-height:60px;line-height:1.45}
+.cinema-stage.has-scene-art .cinema-presence{display:none}
+@keyframes cinema-art-enter{from{opacity:.65;transform:scale(1.025)}to{opacity:1;transform:scale(1)}}
+@media(max-width:740px){
+ .cinema-stage.has-scene-art{min-height:min(560px,72dvh)}
+ .cinema-art-wrap{inset:0 0 40%;background:#0b1113}
+ .cinema-art{object-fit:contain;object-position:center 0}
+ .cinema-stage.has-scene-art .cinema-caption{padding:17px 14px 18px}
+ .cinema-stage.has-scene-art .cinema-dialogue{font-size:16px;min-height:76px}
+ .cinema-stage.has-scene-art .cinema-kicker{font-size:9px;line-height:1.35}
+ .cinema-stage.has-scene-art .cinema-speaker{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.cinema-art{animation:none!important}}

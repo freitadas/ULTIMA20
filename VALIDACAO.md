@@ -33,3 +33,10 @@
 3. Modo solo deve abrir em navegador moderno e continuar sem backend.
 4. Nunca afirmar que um domínio está publicado ou que sistemas online foram homologados sem teste real.
 5. Ao habilitar Workers, usar ID de D1 **real**, executar SQL e testar `/api/health`, cadastro, login, salvar, carregar e sala cooperativa em múltiplos navegadores.
+
+
+### Verificação específica da V11.2
+- Quatro artes recortadas dos mockups originais, sem a interface estática sobreposta.
+- Vinculação por personagem e tom da cena; os diálogos e botões permanecem dinâmicos.
+- Verificar em navegador a cena do hospital e se possível as demais cenas após progredir na campanha.
+- Publicação em Cloudflare real não realizada aqui.

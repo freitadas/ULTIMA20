@@ -86,3 +86,10 @@ O salvamento V11 usa `ut-v11-campaign`. Quando não há salvamento V11, o jogo b
 
 ## Atualização V11.1
 - Cutscenes agora exibem personagens em cena com retratos estilizados, nome, função e cenário temático por localização/tom da cena.
+
+
+## V11.2 — Artes completas nas cutscenes
+
+Quatro cutscenes ilustradas e incorporadas ao jogo (hospital com Clara/Sofia, telhado com Clara/Nina, laboratório Helix com Clara/Íris, flashback com Clara/Daniel). As artes são imagens WebP incluídas **na raiz** do ZIP. O sistema apresenta automaticamente a arte quando os personagens participam de uma cena compatível; demais cenas usam o visual estilizado anterior. As falas, o título, o nome de quem fala e os botões são elementos HTML funcionais, não textos fixos dentro das imagens. O build copia as quatro artes para `dist/`.
+
+Publicação Pages (frontend solo): `npm run build`, saída `dist`. Para contas/multiplayer, deploy Worker e configuração D1/Durable Objects são adicionais.

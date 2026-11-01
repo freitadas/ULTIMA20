@@ -255,8 +255,27 @@ function cinemaCastForSpeaker(speaker=''){const key=cinemaKeyFromSpeaker(speaker
 function cinemaInitials(name=''){const clean=String(name).replace(/\/.*/,'').trim();const parts=clean.split(/\s+/).filter(Boolean);return parts.slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?'}
 function cinemaCounterpart(lines,index,speaker){for(let i=index+1;i<lines.length;i++){if(lines[i]&&lines[i][0]!==speaker)return lines[i][0]}for(let i=index-1;i>=0;i--){if(lines[i]&&lines[i][0]!==speaker)return lines[i][0]}return speaker==='CLARA'?'RÁDIO':'CLARA'}
 function renderCinemaPortrait(speaker,side='left',active=false){const info=cinemaCastForSpeaker(speaker),init=cinemaInitials(info.speaker);return `<div class="cinema-portrait ${side} ${active?'active':''} char-${info.key}" style="--char-accent:${info.accent};--char-skin:${info.skin};--char-hair:${info.hair};--char-outfit:${info.outfit}"><div class="cinema-portrait-frame"><div class="cinema-portrait-bg"></div><div class="cinema-bust"><span class="cinema-bust-hair"></span><span class="cinema-bust-head"></span><span class="cinema-bust-body"></span></div><div class="cinema-portrait-tag">${escapeHtml(init)}</div></div><div class="cinema-portrait-meta"><strong>${escapeHtml(info.speaker)}</strong><small>${escapeHtml(info.role)}</small></div></div>`}
+// V11.2: cenas ilustradas com arte integrada; somente a imagem é estática. Fala, nome e botões são HTML dinâmico.
+const CINEMA_ARTS = Object.freeze({
+ hospital:'cutscene_hospital.webp',
+ rooftop:'cutscene_rooftop.webp',
+ helix:'cutscene_helix.webp',
+ flashback:'cutscene_flashback.webp'
+});
+function cinemaArtForScene(lines,tone){
+ const names=(Array.isArray(lines)?lines:[]).map(line=>Array.isArray(line)?String(line[0]||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase():'');
+ const has=name=>names.some(s=>s.includes(name));
+ // Art must match the characters actually participating in this cutscene.
+ if(tone==='memory' && has('daniel') && has('clara'))return CINEMA_ARTS.flashback;
+ if(tone==='hospital' && has('sofia') && has('clara'))return CINEMA_ARTS.hospital;
+ if(['road','street','tower'].includes(tone) && has('nina') && has('clara'))return CINEMA_ARTS.rooftop;
+ if(tone==='laboratory' && has('iris') && has('clara'))return CINEMA_ARTS.helix;
+ return null;
+}
 function renderCinematic(){if(!cinematic)return;const {lines,index,title,tone}=cinematic,[speaker,dialogue]=lines[index];
- const partner=cinemaCounterpart(lines,index,speaker); const scene=`<div class="cinema-stage tone-${escapeHtml(tone)}">${tone==='memory'?'<div class="memory-film-label">ANTES DO SILÊNCIO · MEMÓRIA</div>':''}<div class="cinema-backdrop" aria-hidden="true"><div class="cinema-skyline"></div><div class="cinema-scenery tone-${escapeHtml(tone)}"><span></span><span></span><span></span></div><div class="cinema-signal">◉ ◌ ◉</div><div class="cinema-location">${escapeHtml(title)}</div></div><div class="cinema-character-layer">${renderCinemaPortrait(speaker,'left',true)}${renderCinemaPortrait(partner,'right',false)}</div><div class="cinema-caption"><div class="cinema-kicker">CENA ${String(index+1).padStart(2,'0')} / ${String(lines.length).padStart(2,'0')} · ${escapeHtml(title)}</div><div class="cinema-speaker">${escapeHtml(speaker)}</div><p class="cinema-dialogue">${escapeHtml(dialogue)}</p><div class="cinema-presence"><span class="active-line">FALANDO AGORA: ${escapeHtml(speaker)}</span><span class="partner-line">EM CENA: ${escapeHtml(partner)}</span></div></div></div><div class="cinema-actions"><span>◉ ${index+1} / ${lines.length} · CUTSCENE</span><button class="secondary" data-action="skip-cutscene">PULAR CENA</button><button class="primary" data-action="next-cutscene">${index+1===lines.length?'CONTINUAR':'PRÓXIMA FALA'} →</button></div>`;
+ const partner=cinemaCounterpart(lines,index,speaker); const art=cinemaArtForScene(lines,tone);
+ const artHtml=art?`<div class="cinema-art-wrap"><img src="${art}" class="cinema-art" alt="Ilustração cinematográfica da cena com os personagens e seu cenário" loading="eager"></div>`:'';
+ const scene=`<div class="cinema-stage tone-${escapeHtml(tone)} ${art?'has-scene-art':''}">${artHtml}${tone==='memory'?'<div class="memory-film-label">ANTES DO SILÊNCIO · MEMÓRIA</div>':''}<div class="cinema-backdrop" aria-hidden="true"><div class="cinema-skyline"></div><div class="cinema-scenery tone-${escapeHtml(tone)}"><span></span><span></span><span></span></div><div class="cinema-signal">◉ ◌ ◉</div><div class="cinema-location">${escapeHtml(title)}</div></div>${art?'':`<div class="cinema-character-layer">${renderCinemaPortrait(speaker,'left',true)}${renderCinemaPortrait(partner,'right',false)}</div>`}<div class="cinema-caption"><div class="cinema-kicker">CENA ${String(index+1).padStart(2,'0')} / ${String(lines.length).padStart(2,'0')} · ${escapeHtml(title)}</div><div class="cinema-speaker">${escapeHtml(speaker)}</div><p class="cinema-dialogue">${escapeHtml(dialogue)}</p><div class="cinema-presence"><span class="active-line">FALANDO AGORA: ${escapeHtml(speaker)}</span><span class="partner-line">EM CENA: ${escapeHtml(partner)}</span></div></div></div><div class="cinema-actions"><span>◉ ${index+1} / ${lines.length} · CUTSCENE</span><button class="secondary" data-action="skip-cutscene">PULAR CENA</button><button class="primary" data-action="next-cutscene">${index+1===lines.length?'CONTINUAR':'PRÓXIMA FALA'} →</button></div>`;
  show(scene,'cinematic');beep(index%2?230:370,.09,'sine',.025);
 }
 function nextCinematic(skip=false){if(!cinematic)return;if(skip||cinematic.index+1>=cinematic.lines.length){const fn=cinematic.onDone;cinematic=null;fn();return}cinematic.index++;renderCinematic()}
