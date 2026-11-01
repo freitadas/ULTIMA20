@@ -1,71 +1,80 @@
-# ÚLTIMA TRANSMISSÃO — V4.0 (pacote consolidado)
+# ÚLTIMA TRANSMISSÃO — V5.0 / Edição Narrativa
 
-Jogo 2D de apocalipse zumbi, em português, para navegador. Este único pacote consolida V1.1, V1.2, V2.0, V3.0 e V4.0. Todos os arquivos vêm diretamente na raiz do ZIP, sem pasta externa.
+Jogo **solo jogável de apocalipse zumbi em mundo aberto 2D**, com campanha original de **7 capítulos / 30 missões**, mais de 90 opções de escolha (3 por missão), 13 personagens documentados, 37 cutscenes de capítulos/missões, consequências individuais, epílogos por personagem e **16 desfechos narrativos possíveis, além da morte**. Funciona em navegador moderno, sem dependências para o modo solo.
 
-## Jogar agora (sem servidor)
+## Começar agora
 
-1. Extraia todos os arquivos do ZIP para uma mesma pasta.
-2. Abra `index.html` no Chrome ou Edge. Também pode publicar os arquivos no Cloudflare Pages para jogar no navegador.
-3. Na tela inicial, escolha **Começar campanha**; controle Clara com WASD/setas.
+1. Extraia **todos os arquivos** do ZIP para a mesma pasta (sem alterar os nomes).
+2. Abra `index.html` no Chrome ou Edge para jogar **offline/solo**.
+3. Clique em **INICIAR HISTÓRIA**, acompanhe ou pule a cutscene, explore o mapa e vá até o ponto amarelo da missão. Pressione **E** perto do ponto de interesse; as escolhas aparecem após a cena.
+4. Durante a exploração, use **WASD/setas** para movimentação, **Espaço** para golpe, **F** para disparo, **M** para mapa, **J** para diário e **Esc** para pausa. No celular, utilize o controle virtual, **USAR**, **GOLPE**, **TIRO** e **MOCHILA**.
 
-Controles: WASD/setas = andar; E = interagir; Espaço = golpear; F = disparar; M = mapa; J = diário; Esc = pausa. No celular, use os controles na tela e **MOCHILA** para abrir o painel de recursos.
+**Importante:** as cutscenes são cenas animadas com CSS, textos, diálogos e efeitos sonoros sintetizados. **Não são arquivos de vídeo nem cenas 3D.** O mundo aberto é um mapa 2D contínuo com regiões e marcos distintos. Os locais de missão não têm interiores 3D.
 
-**O modo SOLO funciona sem Cloudflare, login, instalação ou dependências.** Salvamento em localStorage. A primeira abertura pode demorar alguns instantes em computadores mais lentos devido ao desenho do mapa.
+## Mudanças em relação à V4.0
 
-## Publicar a campanha solo gratuitamente com Pages
+- Passou de **2 para 7 capítulos** e de **10 para 30 missões**, distribuídas em diferentes bairros de Porto Cinza.
+- **20 missões novas** com descrição do conflito, três decisões por missão e consequência narrativa própria.
+- **Prólogo de cada capítulo e cutscene de todas as 30 missões**, com navegação fala a fala e botão para pular; após cada escolha aparece a consequência, e o diário registra as memórias.
+- Protagonista com objetivo central: descobrir o destino de **Daniel Mendes**, seu irmão, e a origem da política de silêncio relacionada ao **Instituto Helix**.
+- **13 personagens** no dossiê: Clara, Sofia, Nina, Raul, Helena, Tomás, Bento, Eva, Lia, Íris, Vítor, Daniel e Miguel. Relações quantificadas com oito personagens.
+- **16 desfechos narrativos principais + morte**, com epílogos condicionais para sete personagens. Os finais dependem de alianças, ações solidárias, provas, tratamento, destino de Daniel, governança da comunidade e caminho final.
+- Mundo expandido de 2.800 × 1.880 para **3.480 × 2.450 unidades**, mais pontos exploráveis, recursos, ruas e NPCs.
+- De 8 para **14 conquistas**. Novo quadro de capítulos e registro histórico detalhado.
+- Mantidos combate, inventário, zumbis, ciclo de dia/noite, progresso, modo solo e sistema cooperativo opcional.
 
-- Suba **os arquivos extraídos** para a raiz do repositório GitHub (não suba o ZIP fechado).
-- Cloudflare → Workers & Pages → Create application → Pages → Import existing Git repository.
-- Autorize a conexão GitHub, selecione `freitadas/ULTIMA20` (ou seu próprio repositório), branch `main`, framework `None`, build command `exit 0`, output `.`.
-- Publique. Esta opção executa a campanha solo; **login, salvamento online e salas cooperativas não funcionam no Pages estático**.
+## Continuidade de salvamentos V4.0
 
-## Publicar a V4.0 completa (Workers + D1 + Durable Objects)
+O modo solo **reconhece automaticamente o salvamento V4.0** (`ut-v4-campaign`) quando ainda não existir salvamento V5.0. A campanha antiga concluída na missão 10 pode ser retomada como uma **falsa evacuação**, entrando no capítulo 3. As escolhas e os recursos antigos são preservados, com campos novos inicializados nos valores padrão. Para evitar substituição acidental, a V5.0 utiliza a chave separada `ut-v5-campaign` e não apaga o salvamento antigo. Salvamentos V4.0 do D1 também podem ser convertidos ao carregar pela API da V5.0.
 
-A V4.0 online necessita um **Worker**, não somente Pages. O mesmo Worker servirá HTML/CSS/JS e a API em `/api/*` e WebSockets em `/ws/*`.
+## Publicar o modo solo com GitHub + Cloudflare Pages
 
-1. Instale Node.js recente e descompacte o ZIP. Execute em um terminal dentro da pasta do jogo:
+1. Crie ou atualize o repositório do jogo no GitHub e envie os **arquivos extraídos** do ZIP para a raiz, não o ZIP em si.
+2. Cloudflare → Workers & Pages → **Pages** → **Import an existing Git repository**. Autorize a integração GitHub, selecione seu repositório e a branch `main`.
+3. Framework `None`; **build command `npm run build`**; **diretório de saída `dist`**. O build copia somente os arquivos públicos `index.html`, `styles.css`, `story.js` e `game.js`, evitando exposição do backend e da documentação.
+4. Publique e abra o URL `pages.dev` gerado. **Nesse modo estático, contas e cooperativo online não estarão ativos.**
 
+## Publicar o modo online com Cloudflare Workers, D1 e Durable Objects
+
+O backend é uma adaptação do Worker da V4.0, agora com validação de 30 missões, coordenadas ampliadas e todas as opções do sistema cooperativo.
+
+1. Instale Node.js recente e abra um terminal na pasta extraída. Execute:
    ```sh
    npm install
    npx wrangler login
    npx wrangler d1 create ultima-transmissao-db
    ```
-
-2. Copie o `database_id` real exibido pelo comando D1 para o campo `database_id` de `wrangler.jsonc`, substituindo literalmente `COLE_AQUI_O_ID_REAL_DO_SEU_D1`. **Não use um ID inventado.**
-3. Inicialize o banco e publique:
-
+2. Substitua `COLE_AQUI_O_ID_REAL_DO_SEU_D1` em `wrangler.jsonc` pelo `database_id` **real** que a Cloudflare informar. Nunca coloque credenciais no código.
+3. Inicialize as tabelas e publique:
    ```sh
    npm run db:remote
    npm run deploy
    ```
+4. No endereço do Worker, teste `/api/health`, crie uma conta no botão **CONTA**, salve o progresso e crie uma sala em **COOPERATIVO**. Salas usam WebSockets/Durable Objects e permitem até 4 pessoas com posição compartilhada e decisões por votos.
+5. Para integração GitHub → Workers Builds, utilize o comando build `npm run build` e deploy `npx wrangler deploy`, após configurar o D1. `npm run build` coloca apenas os 4 arquivos públicos em `dist/`.
 
-4. Acesse o domínio `workers.dev` que o Wrangler informar. Confirme `https://SEU-DOMINIO/api/health` mostrando `database:true` e `rooms:true`.
-5. Na interface, use **CONTA** para registrar usuário e salvar sua campanha no D1. Use **COOPERATIVO** para criar sala e compartilhar um código de seis caracteres.
+**Atenção:** D1 e Durable Objects exigem configuração real em sua conta, uma implantação correta e testes com usuários distintos. A publicação online e as sessões multiplayer reais **não foram executadas nesta entrega**. Combate com zumbis, inventário e dano continuam processados **localmente** em cada navegador; coop sincroniza apenas posições e escolhas da narrativa. O multiplayer ainda não é um servidor de combate autoritativo.
 
-**GitHub → Cloudflare Workers Builds:** se usar implantação automática, o Worker deve ter o mesmo nome do campo `name` em `wrangler.jsonc` (neste pacote, `ultima20`). O comando de build é `npm run build` e o de deploy é `npx wrangler deploy`. O build cria `dist/` somente com os 3 arquivos públicos. Primeiro prepare o D1 e atualize o `database_id` no repositório; a migração `new_sqlite_classes` cria o Durable Object. As configurações variam de acordo com a conta. Se a tela mostrar **Missing git connection**, autorize/reconecte a integração GitHub no Cloudflare antes de tentar publicar via repositório. O método Wrangler CLI permite publicar sem a conexão GitHub.
+## Comandos locais
 
-Para desenvolvimento local com backend: execute `npm run db:local`, depois `npm run dev`. O Wrangler usa armazenamento local em sua configuração de desenvolvimento.
+```sh
+npm install
+npm run check
+npm run build
+npm run db:local
+npm run dev
+```
 
-## Implementado por versão
+## Arquivos do pacote
 
-- **V1.1:** mapa 2D desenhado em Canvas, prédios, ruas, veículos, árvores, zumbis perseguidores, combate corpo a corpo e à distância, efeitos sonoros sintetizados, feedback de dano, controles desktop/mobile, ajuste básico da dificuldade.
-- **V1.2:** decisões ramificadas, relações de confiança com Nina, Sofia e Raul, missões dependentes de recursos, consequências narrativas e registro do diário.
-- **V2.0:** segundo capítulo desbloqueável, setor leste, novos cenários e personagens, continuação das escolhas, dez missões de dois capítulos e múltiplos epílogos.
-- **V3.0:** cadastro/login de apelido e senha, senha derivada por PBKDF2, sessão por cookie `HttpOnly`, progresso persistido por usuário no D1, conquistas salvas como parte da campanha.
-- **V4.0:** salas de até quatro jogadores com Durable Objects/WebSockets, visualização das posições dos participantes, progresso narrativo da sala e votos coletivos nas decisões de missão.
+- `index.html` — interface, comandos e menu.
+- `styles.css` — identidade visual, cenas animadas e responsividade.
+- `story.js` — roteiro, personagens, cenas e opções de 20 missões novas, além das cenas aprimoradas das primeiras dez.
+- `game.js` — motor do mundo aberto, cutscenes, escolhas, narrativas, salvamentos e cooperativo cliente.
+- `worker.js`, `schema.sql`, `wrangler.jsonc` — backend e serviços online.
+- `package.json`, `build.mjs` — ferramentas de desenvolvimento.
+- `.gitignore`, `.assetsignore` — exclusões.
+- `PROJETO.md` — enredo e critérios editoriais.
+- `VALIDACAO.md` — testes e limites.
 
-## Limites e escopo reais
-
-- **Exploração aberta 2D**: dois setores conectados, sendo o leste desbloqueado após missão 5. Não é um cenário 3D nem há interiores independentes ou veículos dirigíveis.
-- **Combate dos zumbis é local em cada cliente**, mesmo no modo cooperativo. Posições dos jogadores, avanços narrativos e votações são compartilhados, mas inimigos, inventário e dano ainda não são simulados no servidor. Não há PvP.
-- **Conquistas em conta** são persistidas como dados da campanha enviados pelo cliente, **não são verificadas por um sistema antitrapaça**. Não há ranking competitivo nesta versão.
-- As salas persistem as escolhas, mas dependem de conexão WebSocket. A decisão é finalizada quando todos os participantes conectados votarem. Em caso de empate, vence a primeira alternativa entre as mais votadas.
-- Autenticação básica para protótipo; para um serviço público em escala, adicionar recuperação de conta, e-mail verificado, auditoria, monitoramento, testes de carga e medidas adicionais contra automação.
-- Nenhum dado sensível/secret é embutido no pacote. A configuração inclui deliberadamente um ID de D1 placeholder que precisa ser preenchido antes do deploy do Worker completo.
-- **O backend Cloudflare não foi publicado nem validado em uma conta real nesta entrega.** Sua implantação e testes entre dispositivos dependem das credenciais/configurações da sua conta.
-
-## Estrutura (todos na raiz do ZIP)
-
-`index.html` interface, `styles.css` estilo, `game.js` lógica solo+co-op cliente, `worker.js` API+DO, `schema.sql` tabelas D1, `wrangler.jsonc` configuração, `build.mjs` gera `dist/` sem expor backend, `package.json` scripts, `.assetsignore` defesa adicional, `.gitignore`, `README.md`, `PROJETO.md`, `VALIDACAO.md`.
-
-**Não publique `worker.js`, senhas ou credenciais em serviços terceiros fora do controle do repositório. Nunca coloque tokens de Cloudflare ou senhas em JavaScript cliente.**
+Todos os arquivos listados estão **diretamente na raiz do ZIP**. Para publicar o projeto completo com Worker, o build copia apenas os arquivos públicos para `dist/`.

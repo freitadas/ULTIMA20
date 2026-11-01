@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#09110e"><meta name="description" content="ÚLTIMA TRANSMISSÃO — sobrevivência zumbi em mundo aberto, história, escolhas e cooperação.">
-  <title>ÚLTIMA TRANSMISSÃO | Mundo Aberto — V4.0</title>
+  <title>ÚLTIMA TRANSMISSÃO | Mundo Aberto — V5.0</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
       <section class="game-area" aria-label="Mundo aberto">
         <div class="scene-title"><span class="dot"></span><span id="region">ZONA DE EVACUAÇÃO</span><span class="pill">MUNDO ABERTO</span></div>
         <canvas id="game" aria-label="Mapa do jogo de sobrevivência" tabindex="0"></canvas>
-        <div class="quest-toast"><div class="quest-index" id="quest-index">MISSÃO 01 / 10</div><strong id="quest-title">Em busca de respostas</strong><span id="quest-hint">Vá até o local marcado em amarelo.</span><span id="quest-distance"></span></div>
+        <div class="quest-toast"><div class="quest-index" id="quest-index">MISSÃO 01 / 30</div><strong id="quest-title">Em busca de respostas</strong><span id="quest-hint">Vá até o local marcado em amarelo.</span><span id="quest-distance"></span></div>
         <div class="compass"><span id="compass-text">N ↑</span></div>
         <div class="controls-hint">WASD mover <b>•</b> E interagir <b>•</b> ESPAÇO atacar <b>•</b> F atirar <b>•</b> M mapa</div>
         <div id="interaction-hint" class="interaction-hint hidden">[ E ] INTERAGIR</div>
@@ -41,10 +41,11 @@
         <div class="sidebar-footer"><button id="btn-map">MAPA [M]</button><button id="btn-journal">DIÁRIO [J]</button><button id="btn-help">AJUDA</button></div>
       </aside>
     </main>
-    <footer class="bottom"><span>PORTO CINZA — SETOR ISOLADO <b>◆</b> <span id="coordinates">X: 0000 Y: 0000</span></span><span><span id="save-status">SALVO LOCALMENTE</span> <b>•</b> BUILD 4.0.0</span></footer>
+    <footer class="bottom"><span>PORTO CINZA — SETOR ISOLADO <b>◆</b> <span id="coordinates">X: 0000 Y: 0000</span></span><span><span id="save-status">SALVO LOCALMENTE</span> <b>•</b> BUILD 5.0.0</span></footer>
   </div>
   <div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Menu do jogo"></div></div>
   <div id="toast-container" aria-live="polite"></div>
+  <script src="story.js" defer></script>
   <script src="game.js" defer></script>
 </body>
 </html>

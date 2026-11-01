@@ -30,7 +30,7 @@ async function handleApi(req,env,url){const path=url.pathname.slice(5),method=re
  if(path==='save'&&method==='GET'){const result=await env.DB.prepare('SELECT data,updated_at FROM saves WHERE user_id=?').bind(user.id).first();let save=null;try{if(result)save=JSON.parse(result.data)}catch{}return json({save,updatedAt:result?.updated_at||null})}
  if(path==='save'&&method==='POST'){
   const body=await readBody(req,55000),s=body.data;
-  if(!s||s.version!==4||!Number.isInteger(s.quest)||s.quest<0||s.quest>10||!Array.isArray(s.decisions)||s.decisions.length>10||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<0||s.x>2800||s.y<0||s.y>1880)return json({error:'Salvamento inválido.'},400);
+  if(!s||![4,5].includes(s.version)||!Number.isInteger(s.quest)||s.quest<0||s.quest>30||!Array.isArray(s.decisions)||s.decisions.length>30||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<0||s.x>3480||s.y<0||s.y>2450)return json({error:'Salvamento inválido.'},400);
   const saved=JSON.stringify(s);if(saved.length>49000)return json({error:'Salvamento ultrapassa o limite.'},413);
   await env.DB.prepare('INSERT INTO saves(user_id,data,updated_at) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET data=excluded.data,updated_at=excluded.updated_at').bind(user.id,saved,Date.now()).run();return json({ok:true});
  }
@@ -47,7 +47,27 @@ const allowed=[
  ['school_save','school_map','school_burn'],
  ['tower_people','tower_truth','tower_self'],
  ['lab_cure','lab_evidence','lab_destroy'],
- ['end_together','end_truth','end_alone']
+ ['end_together','end_truth','end_alone'],
+ ["bridge_open", "bridge_order", "bridge_detour"],
+ ["press_protect", "press_publish", "press_keep"],
+ ["water_community", "water_quick", "water_evidence"],
+ ["station_decode", "station_rescue", "station_scavenge"],
+ ["bento_read", "bento_hide", "bento_trade"],
+ ["beds_care", "beds_investigate", "beds_lock"],
+ ["raul_defend", "raul_exile", "raul_neutral"],
+ ["windows_search", "windows_evac", "windows_ignore"],
+ ["archive_release", "archive_protect", "archive_delete"],
+ ["cure_consent", "cure_force", "cure_store"],
+ ["vitor_arrest", "vitor_deal", "vitor_evidence"],
+ ["brother_publish", "brother_locate", "brother_guard"],
+ ["power_both", "power_shelter", "power_radio"],
+ ["siege_evac", "siege_stand", "siege_escape"],
+ ["council_open", "council_lead", "council_ignore"],
+ ["door_rescue", "door_wait", "door_leave"],
+ ["city_solidarity", "city_screen", "city_flee"],
+ ["signal_full", "signal_safe", "signal_burn"],
+ ["path_tunnel", "path_bridge", "path_stay"],
+ ["final_evac", "final_truth", "final_rebuild"]
 ];
 export class GameRoom extends DurableObject {
  constructor(ctx,env){super(ctx,env);this.ctx=ctx;this.env=env;this.positions=new Map()}
@@ -58,10 +78,10 @@ export class GameRoom extends DurableObject {
  presence(){this.emit({type:'presence',members:this.people().map(x=>x.name),positions:this.positionsSnapshot()})}
  async fetch(request){if(request.headers.get('Upgrade')?.toLowerCase()!=='websocket')return new Response('WebSocket obrigatório',{status:426});if(this.clients().length>=4)return new Response('Sala cheia: máximo quatro jogadores.',{status:429});const name=(request.headers.get('x-player-name')||'Sobrevivente').slice(0,20);const wsPair=new WebSocketPair();const [client,server]=Object.values(wsPair);this.ctx.acceptWebSocket(server);const id=crypto.randomUUID();server.serializeAttachment({id,name});const history=await this.ctx.storage.get('history')||[];server.send(JSON.stringify({type:'snapshot',you:id,members:this.people().map(x=>x.name),positions:this.positionsSnapshot(),history}));this.presence();return new Response(null,{status:101,webSocket:client})}
  async webSocketMessage(sock,raw){if(typeof raw!=='string'||raw.length>900)return;let data;try{data=JSON.parse(raw)}catch{return}const me=sock.deserializeAttachment();if(!me)return;
- if(data.type==='position'){const x=Number(data.x),y=Number(data.y);if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>2800||y<0||y>1880)return;this.positions.set(me.id,{x:Math.round(x),y:Math.round(y)});this.emit({type:'positions',positions:this.positionsSnapshot()});return}
+ if(data.type==='position'){const x=Number(data.x),y=Number(data.y);if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>3480||y<0||y>2450)return;this.positions.set(me.id,{x:Math.round(x),y:Math.round(y)});this.emit({type:'positions',positions:this.positionsSnapshot()});return}
  if(data.type==='vote'){
   const history=await this.ctx.storage.get('history')||[],q=history.length;
-  if(q>9||data.q!==q||!allowed[q].includes(data.option)){sock.send(JSON.stringify({type:'error',error:'Escolha não corresponde à missão compartilhada.'}));return}
+  if(q>=allowed.length||data.q!==q||!allowed[q].includes(data.option)){sock.send(JSON.stringify({type:'error',error:'Escolha não corresponde à missão compartilhada.'}));return}
   const currentVotes=await this.ctx.storage.get('votes')||{};currentVotes[me.id]=data.option;await this.ctx.storage.put('votes',currentVotes);const people=this.people();const total=people.length,votes=people.filter(p=>Object.hasOwn(currentVotes,p.id));this.emit({type:'votes',count:votes.length,players:total});if(votes.length===total&&total>0){const tally=new Map();for(const p of people){const choice=currentVotes[p.id];tally.set(choice,(tally.get(choice)||0)+1)}const choice=[...tally].sort((a,b)=>b[1]-a[1]||allowed[q].indexOf(a[0])-allowed[q].indexOf(b[0]))[0][0];history.push({q,option:choice});await this.ctx.storage.put('history',history);await this.ctx.storage.put('votes',{});this.emit({type:'resolved',q,option:choice,history});}
  }
  }
