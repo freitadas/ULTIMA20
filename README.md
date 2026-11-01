@@ -82,3 +82,7 @@ O salvamento V11 usa `ut-v11-campaign`. Quando não há salvamento V11, o jogo b
 `index.html`, `styles.css`, `game.js`, `story.js`, `expansion.js`, `worker.js`, `schema.sql`, `wrangler.jsonc`, `package.json`, `build.mjs`, `.gitignore`, `.assetsignore`, `README.md`, `PROJETO.md`, `VALIDACAO.md`.
 
 **Arquivos soltos diretamente na raiz do ZIP.** Não é necessário instalar um framework JavaScript. O frontend foi desenvolvido sem bibliotecas externas para reduzir dependências.
+
+
+## Atualização V11.1
+- Cutscenes agora exibem personagens em cena com retratos estilizados, nome, função e cenário temático por localização/tom da cena.

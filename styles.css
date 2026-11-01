@@ -76,3 +76,71 @@
 #toast-container{top:auto;bottom:64px;max-width:min(440px,78vw)}
 .toast{padding:9px 14px;font-size:11px;box-shadow:0 4px 20px #0008}
 @media(max-width:740px){#toast-container{bottom:165px;max-width:min(62vw,290px);left:50%}.toast{font-size:10px;padding:7px 9px}}
+
+/* V11.1 — cutscenes com personagens e cenário */
+.cinema-stage{position:relative;min-height:min(560px,74vh);display:grid;grid-template-rows:1fr auto;overflow:hidden;background:linear-gradient(180deg,#0b1013,#0c1718 55%,#06090a);}
+.cinema-backdrop{position:absolute;inset:0;overflow:hidden}
+.cinema-location{position:absolute;left:18px;top:16px;z-index:2;padding:9px 12px;border:1px solid #6d7f6c8c;background:#0f1814d8;color:#e5e8ce;font-size:10px;letter-spacing:1.8px;font-weight:900;text-transform:uppercase}
+.cinema-character-layer{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:flex-end;padding:42px 30px 130px;z-index:1;pointer-events:none}
+.cinema-portrait{width:min(260px,29%);min-width:180px;display:flex;flex-direction:column;gap:10px;opacity:.56;transform:scale(.97);transition:all .25s ease}
+.cinema-portrait.active{opacity:1;transform:scale(1.02)}
+.cinema-portrait.right{align-items:flex-end}
+.cinema-portrait-frame{position:relative;width:100%;aspect-ratio:3/4;border:1px solid color-mix(in srgb, var(--char-accent) 42%, #7a8a74 58%);background:linear-gradient(180deg,color-mix(in srgb, var(--char-accent) 9%, #0d1415 91%),#071012 72%);box-shadow:0 18px 35px #0009, inset 0 0 70px #0007;overflow:hidden}
+.cinema-portrait-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--char-accent) 28%, transparent), transparent 38%),linear-gradient(180deg,transparent 0 45%,#00000055 70%,#00000088 100%)}
+.cinema-bust{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:82%;height:92%}
+.cinema-bust-hair{position:absolute;left:50%;top:11%;transform:translateX(-50%);width:40%;height:23%;border-radius:52% 52% 42% 42%;background:var(--char-hair);box-shadow:0 0 0 7px #00000018}
+.cinema-bust-head{position:absolute;left:50%;top:18%;transform:translateX(-50%);width:34%;height:22%;border-radius:46% 46% 44% 44%;background:var(--char-skin);box-shadow:inset 0 -8px 0 #0000000a}
+.cinema-bust-body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:70%;height:55%;background:linear-gradient(180deg,color-mix(in srgb, var(--char-outfit) 80%, #7f9086 20%), color-mix(in srgb, var(--char-outfit) 55%, #0d1213 45%));clip-path:polygon(15% 0,85% 0,100% 34%,91% 100%,9% 100%,0 34%);border-radius:16px 16px 0 0}
+.cinema-portrait-tag{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--char-accent);color:#102018;font-size:12px;font-weight:1000;box-shadow:0 4px 18px #0007}
+.cinema-portrait-meta{display:flex;flex-direction:column;gap:3px;padding:0 4px}
+.cinema-portrait-meta strong{font-size:13px;letter-spacing:.4px;color:#edf3e2;text-transform:uppercase}
+.cinema-portrait-meta small{font-size:11px;color:color-mix(in srgb,var(--char-accent) 78%, #d1d6c5 22%);letter-spacing:.7px;text-transform:uppercase}
+.cinema-caption{position:relative;z-index:3;margin-top:auto;padding:34px clamp(18px,4vw,38px) 28px;background:linear-gradient(180deg,transparent,#030809de 22%,#050809f8 42%,#06090af7);border-top:1px solid #3a4f46}
+.modal .cinema-dialogue{max-width:none;font-size:clamp(19px,2.7vw,28px);min-height:84px}
+.cinema-presence{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.cinema-presence span{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;font-weight:900;padding:7px 10px;border:1px solid #647765;background:#0f1715;color:#dde6d3}
+.cinema-presence .active-line{border-color:#b3ca7d;color:#e9f3bd}
+.cinema-scenery{position:absolute;inset:0;opacity:.88}
+.cinema-scenery span{position:absolute;display:block}
+.cinema-scenery.tone-hospital{background:linear-gradient(180deg,#172228 0,#243844 46%,#10181b 100%)}
+.cinema-scenery.tone-hospital span:nth-child(1){left:7%;right:7%;bottom:20%;height:12%;background:linear-gradient(90deg,#90b7c244,#e7f9ff22,#8db4bf44)}
+.cinema-scenery.tone-hospital span:nth-child(2){left:10%;bottom:34%;width:20%;height:20%;border:2px solid #d0f3ffaa;background:#acd7e516}
+.cinema-scenery.tone-hospital span:nth-child(3){right:12%;bottom:34%;width:28%;height:22%;border:2px solid #d0f3ffaa;background:#acd7e516}
+.cinema-scenery.tone-road,.cinema-scenery.tone-street{background:linear-gradient(180deg,#1c2330 0,#473e31 56%,#181410 100%)}
+.cinema-scenery.tone-road span:nth-child(1),.cinema-scenery.tone-street span:nth-child(1){left:0;right:0;bottom:20%;height:18%;background:linear-gradient(180deg,#17171700,#161513aa 18%,#0b0b0d 100%)}
+.cinema-scenery.tone-road span:nth-child(2),.cinema-scenery.tone-street span:nth-child(2){left:50%;bottom:20%;width:4px;height:18%;transform:translateX(-50%);background:repeating-linear-gradient(180deg,#f0e1aa 0 12px,transparent 12px 24px)}
+.cinema-scenery.tone-road span:nth-child(3),.cinema-scenery.tone-street span:nth-child(3){left:6%;bottom:38%;width:88%;height:8%;background:linear-gradient(90deg,#0000,#ffd88a22,#0000)}
+.cinema-scenery.tone-industrial{background:linear-gradient(180deg,#272320 0,#3b3125 42%,#161313 100%)}
+.cinema-scenery.tone-industrial span:nth-child(1){left:8%;bottom:18%;width:18%;height:40%;background:#0d0f11;border-top:6px solid #5f4f3b}
+.cinema-scenery.tone-industrial span:nth-child(2){left:32%;bottom:18%;width:22%;height:28%;background:#111618;border-top:6px solid #85684f}
+.cinema-scenery.tone-industrial span:nth-child(3){right:10%;bottom:18%;width:22%;height:46%;background:#13171a;border-top:6px solid #8b6c4b}
+.cinema-scenery.tone-shelter{background:linear-gradient(180deg,#30251f 0,#574536 58%,#1e1612 100%)}
+.cinema-scenery.tone-shelter span:nth-child(1){left:10%;bottom:18%;width:80%;height:22%;background:#261a13}
+.cinema-scenery.tone-shelter span:nth-child(2){left:16%;bottom:38%;width:22%;height:18%;background:#6d543e}
+.cinema-scenery.tone-shelter span:nth-child(3){right:14%;bottom:37%;width:30%;height:22%;background:#45352a;border:2px solid #a88461}
+.cinema-scenery.tone-laboratory{background:linear-gradient(180deg,#10211d 0,#1a473c 44%,#091310 100%)}
+.cinema-scenery.tone-laboratory span:nth-child(1){left:11%;bottom:18%;width:76%;height:18%;background:#122620}
+.cinema-scenery.tone-laboratory span:nth-child(2){left:18%;bottom:37%;width:18%;height:26%;border:2px solid #85c4a677;background:#b2f0cb11}
+.cinema-scenery.tone-laboratory span:nth-child(3){right:16%;bottom:34%;width:26%;height:30%;border:2px solid #85c4a677;background:#b2f0cb11}
+.cinema-scenery.tone-siege{background:linear-gradient(180deg,#261a19 0,#4d231c 54%,#150b0d 100%)}
+.cinema-scenery.tone-siege span:nth-child(1){left:0;right:0;bottom:22%;height:10%;background:repeating-linear-gradient(90deg,#40342c 0 24px,#0000 24px 35px)}
+.cinema-scenery.tone-siege span:nth-child(2){left:12%;bottom:32%;width:18%;height:18%;background:#261f1d;border:2px solid #7e6552}
+.cinema-scenery.tone-siege span:nth-child(3){right:11%;bottom:30%;width:24%;height:24%;background:radial-gradient(circle,#ff8e5e55 0,#ff5c2a22 35%,transparent 65%)}
+.cinema-scenery.tone-tower{background:linear-gradient(180deg,#121628 0,#243153 52%,#0b0f19 100%)}
+.cinema-scenery.tone-tower span:nth-child(1){left:50%;bottom:18%;width:10%;height:46%;transform:translateX(-50%);background:#181c25}
+.cinema-scenery.tone-tower span:nth-child(2){left:50%;bottom:58%;width:22%;height:3px;transform:translateX(-50%);background:#95d4d6;box-shadow:0 0 12px #95d4d6}
+.cinema-scenery.tone-tower span:nth-child(3){left:0;right:0;bottom:20%;height:8%;background:linear-gradient(90deg,#0000,#7bd0ff22,#0000)}
+.cinema-scenery.tone-school{background:linear-gradient(180deg,#2d2330 0,#58463a 54%,#171011 100%)}
+.cinema-scenery.tone-school span:nth-child(1){left:8%;bottom:19%;width:84%;height:18%;background:#342720}
+.cinema-scenery.tone-school span:nth-child(2){left:16%;bottom:40%;width:28%;height:16%;background:#6e543e}
+.cinema-scenery.tone-school span:nth-child(3){right:14%;bottom:39%;width:24%;height:18%;background:#403329;border:2px solid #a78665}
+.cinema-scenery.tone-memory{background:linear-gradient(180deg,#5e4b38 0,#8f7152 52%,#34261d 100%);filter:sepia(.55) saturate(.75)}
+.cinema-scenery.tone-memory span:nth-child(1){left:14%;bottom:20%;width:72%;height:18%;background:#4f3829}
+.cinema-scenery.tone-memory span:nth-child(2){left:20%;bottom:40%;width:20%;height:24%;background:#9c7d5b}
+.cinema-scenery.tone-memory span:nth-child(3){right:19%;bottom:41%;width:22%;height:22%;background:#7d654c}
+.cinema-scenery:not(.tone-hospital):not(.tone-road):not(.tone-street):not(.tone-industrial):not(.tone-shelter):not(.tone-laboratory):not(.tone-siege):not(.tone-tower):not(.tone-school):not(.tone-memory){background:linear-gradient(180deg,#1a2122,#364646 55%,#0c1011)}
+.cinema-scenery:not(.tone-hospital):not(.tone-road):not(.tone-street):not(.tone-industrial):not(.tone-shelter):not(.tone-laboratory):not(.tone-siege):not(.tone-tower):not(.tone-school):not(.tone-memory) span:nth-child(1){left:8%;right:8%;bottom:20%;height:16%;background:#121818}
+.cinema-scenery:not(.tone-hospital):not(.tone-road):not(.tone-street):not(.tone-industrial):not(.tone-shelter):not(.tone-laboratory):not(.tone-siege):not(.tone-tower):not(.tone-school):not(.tone-memory) span:nth-child(2){left:14%;bottom:39%;width:22%;height:20%;background:#4d5e5d}
+.cinema-scenery:not(.tone-hospital):not(.tone-road):not(.tone-street):not(.tone-industrial):not(.tone-shelter):not(.tone-laboratory):not(.tone-siege):not(.tone-tower):not(.tone-school):not(.tone-memory) span:nth-child(3){right:12%;bottom:36%;width:24%;height:24%;background:#2b3637}
+.memory-film-label{position:absolute;z-index:3;right:18px;top:16px;padding:8px 12px;border:1px solid #e0c28b7a;background:#2c1f18cf;color:#f1d4a2;font-size:10px;letter-spacing:1.8px;font-weight:900;text-transform:uppercase}
+@media(max-width:740px){.modal:has(.cinema-stage){width:min(100%,100%);padding:10px}.cinema-stage{min-height:76vh}.cinema-character-layer{padding:54px 10px 170px}.cinema-portrait{width:42%;min-width:0}.cinema-portrait-meta strong{font-size:11px}.cinema-portrait-meta small{font-size:9px}.cinema-caption{padding:24px 16px 20px}.modal .cinema-dialogue{font-size:18px;min-height:94px}.cinema-presence span{font-size:9px;padding:6px 8px}.cinema-location,.memory-film-label{font-size:9px;padding:8px 9px;max-width:42vw}.cinema-portrait-tag{width:28px;height:28px;font-size:10px}}
