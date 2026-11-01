@@ -1,19 +1,31 @@
-# VALIDAÇÃO — V5.0
+# ÚLTIMA TRANSMISSÃO V6.0 — REGISTRO DE VALIDAÇÃO
 
-## Verificações concluídas
+## Resultado técnico da entrega
 
-- `node --check`: `game.js`, `story.js` e `worker.js` — sem erros sintáticos.
-- Verificação da tabela de votação do Worker: 30 missões, 3 opções/etapa, IDs iguais aos da campanha.
-- Execução automatizada do motor em **Chromium headless isolado**, com assets carregados inline devido às restrições de rede do ambiente de teste: **30 missões concluídas**, 30 escolhas aplicadas, 30 memórias registradas, 37 cenas marcadas como vistas e final coletivo `exodo` alcançado.
-- Validação de cutscenes, pular cenas, tela de decisão, consequência pós-escolha, transição de capítulos e interface de epílogos durante a execução automatizada.
-- Salvamento da V5.0 e restauração após reinicialização do contexto de JavaScript com dados persistidos — aprovado.
-- Importação de salvamento V4.0 concluído com 10 missões, convertendo corretamente para capítulo 3, versão 5, sem marcar a campanha expandida como concluída — aprovado.
-- Interface mobile (390 × 844), navegação de cutscene e ausência de erros JavaScript — aprovado.
+- Verificação de sintaxe: `npm run check` — **PASS** para `story.js`, `expansion.js`, `game.js` e `worker.js`.
+- Preparação do frontend: `npm run build` — **PASS**; pasta `dist` formada pelos cinco recursos públicos.
+- Integridade narrativa e interface com Chromium headless (scripts e CSS injetados diretamente na página devido às restrições de navegação do ambiente): **PASS**.
+- Metadados do roteiro: **15 capítulos**, **78 missões**, **33 personagens**, **16 flashbacks interativos**. Total de sequências roteirizadas: 15 introduções + 78 cenas de missão + 16 cenas de flashback = **109**. São sequências HTML/CSS, não vídeos.
+- Fluxo: as 78 missões foram percorridas na interface por cliques de escolha, com passagem por cenas, registros de consequência e final: **PASS**.
+- Memórias: 16 escolhas registradas e persistidas, sem repetição das cenas já concluídas: **PASS**.
+- Todos os 78 objetivos têm pelo menos duas alternativas habilitadas no roteiro testado: **PASS**.
+- Desfecho alcançado em rota de reconstrução: **PASS**. Especial da assembleia: permanece bloqueado sem requisitos e é liberado com os três requisitos correspondentes: **PASS**.
+- História concluída: **78 decisões** e **94 registros** (78 escolhas atuais + 16 interpretações de memória), sem erros fatais de JavaScript no percurso testado.
+- Persistência local: reinicialização lógica com dados salvos e restauração das 78 missões concluídas: **PASS**.
+- Migração de um salvamento V5.0 concluído na missão 30 para V6.0, com retomada na missão 31: **PASS**.
+- Interface móvel simulada em viewport 390 × 844, cutscene e controles virtuais: **PASS**.
+- Tamanho de um salvamento final de teste: aproximadamente 33,5 mil caracteres, abaixo do limite máximo declarado no Worker de 49 mil caracteres.
+- Variações de final: 24 definições narrativas condicionais escritas no código, além da derrota. Não foi exercitada cada combinação de flags até cada final, portanto não se afirma teste individual de todos os 24 caminhos.
 
-## Limites de validação
+## Não comprovado neste ambiente
 
-- O teste automatizado desloca Clara diretamente até os pontos de missão **apenas no ambiente de teste** para acelerar os percursos; o jogador real precisa movimentar-se pelo mapa. Não existe função de teleporte de teste dentro do pacote distribuído.
-- Os testes cobrem integralmente um percurso narrativo e verificam a definição das rotas, mas **não percorrem todas as combinações possíveis** de escolhas e finais.
-- O modo offline foi validado com navegador isolado; o endereço público real no Cloudflare ainda **não foi implantado nem verificado**.
-- Cadastro/login contra banco real, WebSockets remotos, D1 e Durable Objects **não foram testados em produção**. As rotas e a tabela de votos foram atualizadas no código.
-- Os testes descritos não substituem auditoria de segurança, teste de carga nem homologação de múltiplos dispositivos.
+- Publicação real em repositório GitHub do usuário e conexão/autorização Cloudflare.
+- Registro e autenticação por contas Cloudflare Workers + D1 implantados.
+- Salvamento remoto numa instância D1 real.
+- Cooperação WebSocket e Durable Objects com navegadores independentes conectados na infraestrutura publicada.
+- Performance em telefones reais e acessibilidade completa em todas as plataformas.
+- Acessibilidade/navegação real dos 78 locais com deslocamento manual; o teste de progresso reposicionou Clara até os objetivos, o que isola a lógica narrativa do combate. O motor de movimento e o mapa são preservados da versão anterior.
+
+## Restrições conhecidas
+
+O combate, o inventário, os zumbis, o dano e as escolhas pessoais dos flashbacks são processados no cliente, não sincronizados por um servidor autoritativo. Mesmo com o Worker ativo, a cooperação suporta apenas posições e votação nas missões compartilhadas. O jogo utiliza sprites desenhados no Canvas e cenários/cutscenes estilizados em CSS; não tem dublagem gravada ou cenas cinematográficas pré-renderizadas.

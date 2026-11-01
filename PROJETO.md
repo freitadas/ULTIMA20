@@ -1,67 +1,62 @@
-# PROJETO — ÚLTIMA TRANSMISSÃO V5.0
+# ÚLTIMA TRANSMISSÃO V6.0 — BÍBLIA NARRATIVA E TÉCNICA
 
 ## Premissa
 
-Clara Mendes, socorrista que permaneceu em Porto Cinza após o colapso, recebe uma transmissão incompleta de seu irmão Daniel. A busca individual a coloca diante da ocultação de registros pelo Instituto Helix, de uma política de isolamento previamente ordenada e de comunidades que precisam escolher entre fugir, revelar a verdade ou reconstruir a cidade.
+Clara Mendes, socorrista de Porto Cinza, procura o irmão Daniel depois de uma ordem para interromper as comunicações e bloquear a evacuação. O que parecia uma missão de resgate se torna uma investigação sobre as decisões do Instituto Helix, a verdade ocultada pelo sistema de transmissões e a dificuldade de construir uma comunidade sem repetir os abusos do passado. A trama evita a dicotomia simplista entre “salvar todos” e “deixar todos”: muitas decisões positivas têm custos, e nem todo personagem culpado é irrecuperável.
 
-Tema principal: a diferença entre **sobreviver** e **assumir responsabilidade pelo destino dos outros**. A história não apresenta um protagonista perfeitamente justo: escolhas pragmáticas podem quebrar vínculos que serão necessários depois.
+### Estrutura dramática
 
-## Estrutura dos 7 capítulos
+**Ato I — As vozes dentro da cidade** (capítulos 1 a 7; conteúdo preservado da V5.0):
+1. Ruído Branco — primeiro atendimento de Sofia e resgate de Nina.
+2. A Promessa do Resgate — falsas notícias de retirada e colapso das rotas.
+3. Ferro e Cinzas — ordens militares e encobrimentos do bloqueio.
+4. O Abrigo dos Nomes — memória de Bento e conflitos no abrigo.
+5. A Raiz da Praga — responsabilidade da Helix e tratamento experimental.
+6. A Cidade se Levanta — conselho, infraestrutura, cercos.
+7. A Última Escolha — transmissão inicialmente considerada final e resposta inesperada.
 
-| Capítulo | Arco | Missões |
-|---|---|---|
-| 1. Ruído Branco | Hospital, Nina, Raul, abrigo e primeiro sinal de Daniel | 1–5 |
-| 2. A Promessa do Resgate | Bloqueio, escola, torre, Helix e falsa evacuação | 6–10 |
-| 3. Ferro e Cinzas | Helena na ponte, Tomás no terminal, Eva nas bombas e Lia na estação | 11–14 |
-| 4. O Abrigo dos Nomes | Bento, responsabilidade médica de Sofia, julgamento de Raul e família de Nina | 15–18 |
-| 5. A Raiz da Praga | Arquivos, antídoto, confronto com Vítor e fita de Daniel | 19–22 |
-| 6. A Cidade se Levanta | Geradores, cerco, conselho e possível reencontro com Daniel | 23–26 |
-| 7. A Última Escolha | Assembleia, transmissão, rota da comunidade e destino de Porto Cinza | 27–30 |
+**Ato II — O que existe além do silêncio** (capítulos 8 a 11; seis missões por capítulo):
+8. A Outra Margem — trem de Yuri, cartas confiscadas, navio Aurora, reencontro entre Nina e Alice, Samuel, farol.
+9. Antes das Sirenes — lembranças da família Mendes, culpa de Sofia, fita de Helena, a voz de Alice, nome de Olívia, promessa no cais.
+10. Estrada das Cinzas — pedágios de milícia, cozinha de Rosa, túnel de Henrique, reparação de Omar, desmilitarização, evacuação justa.
+11. O Preço de uma Cura — pesquisa responsável, consentimento de Samuel, testemunho de Mara, recursos médicos, anonimização de dados, dilema de dosagem.
 
-## Personagens e conflito pessoal
+**Ato III — O futuro que escolhemos** (capítulos 12 a 15; seis missões por capítulo):
+12. Filhos do Bloqueio — Clara descobre Olívia e Júlia, o caderno de Bento, o direito das crianças à festa, rádio de Luiza, casa e escola.
+13. A Guerra das Vozes — desinformação, cerco a pacientes, desertores, julgamento de Caio, incêndio do arquivo, falsificação de voz.
+14. O Que Nos Foi Tirado — gravação de Vítor, cartas de Dora, diálogo franco com Daniel, reparação de Íris, sepulturas identificadas e futuro de Olívia.
+15. Depois da Última Noite — conselho e limites do poder, arquivo de nomes, direitos dos infectados conscientes, provas de Helix, despedida entre bairros, decisão coletiva final.
 
-- **Clara Mendes:** principal personagem jogável; procura o irmão, mas precisa reconhecer o valor das outras vidas.
-- **Daniel Mendes:** operador de radiodifusão, autor das gravações que conectam o apagão ao encobrimento.
-- **Sofia Valença:** médica que convive com responsabilidade por uma transferência de pacientes.
-- **Nina Duarte:** técnica de rádio que procura a mãe desaparecida.
-- **Raul Nascimento:** mecânico viúvo e guardião dos geradores, vulnerável a acusações da comunidade.
-- **Helena Vasques:** guarda municipal que precisa decidir se obedece às ordens de bloqueio.
-- **Tomás Arantes:** jornalista dividido entre direito à informação e proteção das testemunhas.
-- **Bento:** adolescente que registra nomes dos desaparecidos e insiste em manter a memória.
-- **Eva Saldanha:** engenheira responsabilizada por uma inundação deliberada.
-- **Lia Tavares:** operadora de rádio e preservadora de pedidos de ajuda ignorados.
-- **Íris Monteiro:** cientista que busca corrigir as consequências de pesquisas ocultadas.
-- **Vítor Antunes:** diretor do instituto que justifica políticas cruéis como cálculo utilitarista.
-- **Miguel Braga:** responsável pelos suprimentos do abrigo, dividido entre prudência e solidariedade.
+## Personagens
 
-## Mecânicas narrativas implementadas
+Dossiê de 33 personagens acessível pelo menu. Os 13 anteriores foram preservados: Clara, Sofia, Nina, Raul, Helena, Tomás, Bento, Eva, Lia, Íris, Vítor, Daniel e Miguel. Entraram Alice, Yuri, Marta, Elias, Omar, Mara, Levi, Dora, Gabriel, Cecília, Joana, Samuel, Rosa, Caio, Estela, Olívia, Júlia, Tereza, Luiza e Henrique.
 
-1. **Três escolhas por missão**, com efeitos no inventário, saúde, infecção, XP, confiança, flags e memória narrativa.
-2. **37 cutscenes jogáveis**: prólogo de sete capítulos e cenas anteriores às 30 decisões, com diálogos, estética animada no CSS, sons sintetizados, avanço e opção de pular.
-3. **30 consequências pós-decisão**, apresentadas em tela própria.
-4. **9 cenas de retorno contextual** em pontos-chave, nas quais decisões anteriores alteram o diálogo.
-5. **8 indicadores de relações** com pessoas relevantes e um dossiê de 13 personagens.
-6. **16 conclusões narrativas principais** com regras de elegibilidade e variações por ações anteriores; 1 conclusão por morte. O destino de 7 personagens recebe epílogo específico, condicionado a relacionamentos e decisões.
-7. **Diário persistente**, capítulo em andamento, conquistas e memória das decisões.
+Conflitos centrais: Clara quer salvar Daniel mas precisa reconhecer o direito de Olívia e Júlia de cobrar sua ausência; Sofia tenta reparar a participação em transferências; Nina busca compreender por que Alice desapareceu; Mara e Íris devem testemunhar contra estruturas das quais participaram; Samuel disputa o direito de escolher um tratamento; Rosa e Caio representam modelos de poder incompatíveis.
 
-## Desfechos principais
+## Escolhas com consequências
 
-**Rota de fuga:** O Êxodo da Aurora; O Navio das Pulseiras; Um Lugar para Daniel; A Caravana dos Vivos; A Estrada Vazia; O Resgate Incompleto.
+As missões registram `flags`, `trust`, `recollections`, `decisions`; os flashbacks registram `memoryChoices` e `flags`. Em determinadas cenas, o roteiro consulta flags de missões anteriores antes de apresentar falas adicionais. Sete alternativas especiais são visíveis mas indisponíveis até que requisitos de missões anteriores sejam cumpridos. A última alternativa exige **três requisitos simultâneos**: conselho comunitário, divulgação de provas e vínculo com Olívia.
 
-**Rota da verdade:** O Dia em que o Mundo Ouviu; A Verdade Sobrevive; O Eco das Mentiras; Duas Vozes, Um Sinal; A Última Testemunha.
+Os epílogos de diferentes personagens dependem de suas histórias, não apenas do final geral. Existem 24 desfechos centrais distintos, agrupados em travessia marítima (7), revelação e responsabilização (7), reconstrução de Porto Cinza (7) e decisão da assembleia (3). O fracasso da sobrevivente gera uma conclusão adicional.
 
-**Rota da reconstrução:** Uma Cidade sem Donos; Ferro, Água e Esperança; A Fortaleza Silenciosa; A Cura não É uma Ordem; As Últimas Luzes.
+### Flashbacks
 
-**Derrota:** Porto Cinza Cobrou um Preço (morte por ferimentos ou infecção).
+16 sequências, cada uma com três interpretações possíveis. Mecânica narrativa: o jogador **não reescreve acontecimentos pretéritos**; registra a interpretação que Clara carrega deles. Algumas interpretações liberam escolhas em missões seguintes ou mudanças de diálogo. As cenas usam recursos de composição CSS, animação e legendas, sem vídeo nem áudio de voz gravados.
 
-## Mecânicas existentes preservadas
+## Gameplay
 
-Exploração Canvas 2D, ruas, prédios, caches, NPCs, hordas, combate, inventário, medidores de saúde/fome/sede/infecção, experiência e conquistas, ciclo diário, salvamento local, migração do salvamento V4.0, login e cloud save quando configurados, salas WebSocket para até 4 usuários com votações coletivas.
+Mapa 2D contínuo com área lógica de 5.200 × 3.500, controles por teclado/toque, zumbis com perseguição local, vida/fome/sede/infecção, modos História e Sobrevivência, combate, suprimentos, diário, HUD, conquistas, progressão, NPCs, capítulos, cenas, escolhas e salvamento automático. O mapa não é um 3D com prédios exploráveis internamente. A progressão da campanha é sequencial, mas o mapa pode ser explorado livremente, respeitando o desbloqueio de região do primeiro capítulo.
 
-## Fora de escopo e próximos limites técnicos
+## Arquitetura de publicação
 
-- As cutscenes não são filmes/renderizações 3D nem têm dublagem gravada.
-- Narrativa principal é sequencial, mas as escolhas causam ramificações em cenas de retorno, relacionamentos, recursos, epílogos e diferentes finais. Não há 90 missões distintas, apenas **90 alternativas em 30 missões**.
-- O combate cooperativo não é autoritativo do lado do servidor.
-- Não há streaming de grande mundo, veículos controláveis, interiores 3D, narração TTS, IA generativa ou áudio gravado de atores.
-- Salvos online e salas de jogadores dependem de publicação/validação em uma conta Cloudflare real.
+Frontend estático (`index.html`, `styles.css`, `story.js`, `expansion.js`, `game.js`) publicado via Cloudflare Pages ou `assets` do Worker. Autenticação, D1 e salvamento remoto em `worker.js` + `schema.sql`, rooms em Durable Objects. `wrangler.jsonc` precisa de ID D1 real para implantação completa. Publicação estática não ativa o backend.
+
+## Critérios para uma V6 publicada
+
+- Campanha inicia e termina, todas as 78 missões alcançáveis com pelo menos duas opções livres.
+- As 16 memórias permitem decidir e registrar a escolha sem repetir flashback.
+- Mudança de capítulo mostra introdução corretamente; old saves do V5.0 continuam no capítulo 8.
+- 24 definições de desfecho não conflitam com epílogos individuais.
+- Comandos teclado e controles móveis utilizáveis; nenhum JavaScript fatal.
+- Build separa frontend e backend, e ZIP contém apenas arquivos de projeto soltos na raiz.
+- Backend em produção só é aprovado depois de implantação e teste com D1/WebSocket reais.

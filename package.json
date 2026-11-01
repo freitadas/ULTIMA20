@@ -1,6 +1,6 @@
 {
-  "name": "ultima-transmissao-v5",
-  "version": "5.0.0",
+  "name": "ultima-transmissao-v6",
+  "version": "6.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "deploy": "npm run build && wrangler deploy",
     "db:local": "wrangler d1 execute ultima-transmissao-db --local --file=./schema.sql",
     "db:remote": "wrangler d1 execute ultima-transmissao-db --remote --file=./schema.sql",
-    "check": "node --check story.js && node --check game.js && node --check worker.js",
+    "check": "node --check story.js && node --check expansion.js && node --check game.js && node --check worker.js",
     "build": "node build.mjs"
   },
   "devDependencies": {

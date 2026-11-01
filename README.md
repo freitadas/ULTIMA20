@@ -1,80 +1,58 @@
-# ÚLTIMA TRANSMISSÃO — V5.0 / Edição Narrativa
+# ÚLTIMA TRANSMISSÃO — V6.0 | A Saga das Vozes
 
-Jogo **solo jogável de apocalipse zumbi em mundo aberto 2D**, com campanha original de **7 capítulos / 30 missões**, mais de 90 opções de escolha (3 por missão), 13 personagens documentados, 37 cutscenes de capítulos/missões, consequências individuais, epílogos por personagem e **16 desfechos narrativos possíveis, além da morte**. Funciona em navegador moderno, sem dependências para o modo solo.
+**Jogo 2D de mundo aberto, sobrevivência e narrativa interativa, em português.** Versão integral e autossuficiente sobre a V5.0: 15 capítulos, 78 missões sequenciais, 33 personagens com dossiê, 16 flashbacks com escolhas, 109 sequências de cutscene roteirizadas e 24 desfechos narrativos definidos, além da derrota. Inclui 7 alternativas narrativas especiais condicionadas a escolhas anteriores. Os números foram verificados no código-fonte e nos testes.
 
-## Começar agora
+## Jogar
 
-1. Extraia **todos os arquivos** do ZIP para a mesma pasta (sem alterar os nomes).
-2. Abra `index.html` no Chrome ou Edge para jogar **offline/solo**.
-3. Clique em **INICIAR HISTÓRIA**, acompanhe ou pule a cutscene, explore o mapa e vá até o ponto amarelo da missão. Pressione **E** perto do ponto de interesse; as escolhas aparecem após a cena.
-4. Durante a exploração, use **WASD/setas** para movimentação, **Espaço** para golpe, **F** para disparo, **M** para mapa, **J** para diário e **Esc** para pausa. No celular, utilize o controle virtual, **USAR**, **GOLPE**, **TIRO** e **MOCHILA**.
+1. Extraia os arquivos do ZIP diretamente numa pasta.
+2. Abra **index.html** num navegador moderno para jogar em modo solo. Não é necessário instalar Node.js ou configurar a nuvem.
+3. Clique **INICIAR HISTÓRIA** ou **CONTINUAR CAMPANHA**. Use **WASD/setas** para andar, **E** para interagir com a missão marcada, **ESPAÇO** para corpo a corpo, **F** para disparar, **M** para mapa, **J** para diário e **Esc** para pausa. No celular, use os controles virtuais. Na tela inicial, selecione **HISTÓRIA** (menos ataques e desgaste, padrão) ou **SOBREVIVÊNCIA** (combate e necessidades mais exigentes).
+4. Em missões com flashback, avance pelo diálogo e selecione uma das três interpretações da memória. O passado não é reescrito; o sentido que Clara atribui à lembrança passa a constar do registro e pode influenciar cenas ou opções posteriores.
+5. Ao alcançar um objetivo, escolha como agir. Os fatos da escolha são gravados e podem repercutir dezenas de missões depois.
 
-**Importante:** as cutscenes são cenas animadas com CSS, textos, diálogos e efeitos sonoros sintetizados. **Não são arquivos de vídeo nem cenas 3D.** O mundo aberto é um mapa 2D contínuo com regiões e marcos distintos. Os locais de missão não têm interiores 3D.
+O mundo aberto é uma cidade 2D contínua ampliada para 5.200 × 3.500 unidades; exploração, combate, zumbis, coleta, dia/noite, inventário, vida, fome, sede e infecção foram preservados. As cutscenes são **cenas de diálogo estilizadas em HTML/CSS com efeitos sintetizados**. Não são vídeos 3D, cenas pré-renderizadas nem personagens dublados.
 
-## Mudanças em relação à V4.0
+## Novidades da V6.0
 
-- Passou de **2 para 7 capítulos** e de **10 para 30 missões**, distribuídas em diferentes bairros de Porto Cinza.
-- **20 missões novas** com descrição do conflito, três decisões por missão e consequência narrativa própria.
-- **Prólogo de cada capítulo e cutscene de todas as 30 missões**, com navegação fala a fala e botão para pular; após cada escolha aparece a consequência, e o diário registra as memórias.
-- Protagonista com objetivo central: descobrir o destino de **Daniel Mendes**, seu irmão, e a origem da política de silêncio relacionada ao **Instituto Helix**.
-- **13 personagens** no dossiê: Clara, Sofia, Nina, Raul, Helena, Tomás, Bento, Eva, Lia, Íris, Vítor, Daniel e Miguel. Relações quantificadas com oito personagens.
-- **16 desfechos narrativos principais + morte**, com epílogos condicionais para sete personagens. Os finais dependem de alianças, ações solidárias, provas, tratamento, destino de Daniel, governança da comunidade e caminho final.
-- Mundo expandido de 2.800 × 1.880 para **3.480 × 2.450 unidades**, mais pontos exploráveis, recursos, ruas e NPCs.
-- De 8 para **14 conquistas**. Novo quadro de capítulos e registro histórico detalhado.
-- Mantidos combate, inventário, zumbis, ciclo de dia/noite, progresso, modo solo e sistema cooperativo opcional.
+- **48 missões novas**, capítulos 8 a 15; 30 missões dos sete capítulos anteriores continuam integradas.
+- **20 personagens adicionais**, com histórias cruzadas (Alice, Olívia, Júlia, Samuel, Joana, Mara, Levi, Rosa, etc.).
+- **16 flashbacks com decisões** e interações desbloqueadas por pistas, resgates e relações.
+- **24 desfechos narrativos escritos** e epílogos individualizados, além da possibilidade de morte.
+- **Vínculos duradouros** com novos personagens, ramificações de diálogo condicionadas a fatos antigos, finais afetados por justiça, família, transparência, acolhimento e autoritarismo.
+- **Migração de salvamento solo da V5.0/V4.0**, sem excluir o progresso salvo anteriormente. A última cena da V5.0 vira a abertura do segundo arco, não o fim definitivo.
 
-## Continuidade de salvamentos V4.0
+### Como funciona a continuidade
 
-O modo solo **reconhece automaticamente o salvamento V4.0** (`ut-v4-campaign`) quando ainda não existir salvamento V5.0. A campanha antiga concluída na missão 10 pode ser retomada como uma **falsa evacuação**, entrando no capítulo 3. As escolhas e os recursos antigos são preservados, com campos novos inicializados nos valores padrão. Para evitar substituição acidental, a V5.0 utiliza a chave separada `ut-v5-campaign` e não apaga o salvamento antigo. Salvamentos V4.0 do D1 também podem ser convertidos ao carregar pela API da V5.0.
+A V6.0 grava o estado na chave `ut-v6-campaign`. Caso não exista, procura `ut-v5-campaign` e, depois, `ut-v4-campaign`. Se o jogo antigo terminou no capítulo 7 com 30 missões, a V6.0 abre a campanha a partir da **missão 31**, mantendo decisões, confiança, inventário e conquistas. A V5.0 original não é apagada. O salvamento na nuvem é convertido da mesma forma quando estiver autenticado.
 
-## Publicar o modo solo com GitHub + Cloudflare Pages
+## Publicar pela Cloudflare Pages — modo solo
 
-1. Crie ou atualize o repositório do jogo no GitHub e envie os **arquivos extraídos** do ZIP para a raiz, não o ZIP em si.
-2. Cloudflare → Workers & Pages → **Pages** → **Import an existing Git repository**. Autorize a integração GitHub, selecione seu repositório e a branch `main`.
-3. Framework `None`; **build command `npm run build`**; **diretório de saída `dist`**. O build copia somente os arquivos públicos `index.html`, `styles.css`, `story.js` e `game.js`, evitando exposição do backend e da documentação.
-4. Publique e abra o URL `pages.dev` gerado. **Nesse modo estático, contas e cooperativo online não estarão ativos.**
+1. Envie os arquivos **extraídos** para a **raiz do repositório do GitHub** (exemplo: `freitadas/ULTIMA20`), e não apenas o ZIP.
+2. Cloudflare → Workers & Pages → **Pages** → importar repositório Git. Corrija uma eventual mensagem `Missing git connection` autorizando a integração GitHub.
+3. Framework: `None`; Build command: `npm run build`; Build output directory: `dist`; branch: `main` (se for a branch principal do repositório).
+4. Publique e abra o domínio `pages.dev` fornecido pelo serviço. `build.mjs` coloca somente `index.html`, `styles.css`, `story.js`, `expansion.js` e `game.js` na pasta `dist/`. As APIs online não funcionam em uma publicação exclusiva do Pages.
 
-## Publicar o modo online com Cloudflare Workers, D1 e Durable Objects
+## Publicar o backend online — Workers, D1 e Durable Objects
 
-O backend é uma adaptação do Worker da V4.0, agora com validação de 30 missões, coordenadas ampliadas e todas as opções do sistema cooperativo.
-
-1. Instale Node.js recente e abra um terminal na pasta extraída. Execute:
-   ```sh
-   npm install
-   npx wrangler login
-   npx wrangler d1 create ultima-transmissao-db
-   ```
-2. Substitua `COLE_AQUI_O_ID_REAL_DO_SEU_D1` em `wrangler.jsonc` pelo `database_id` **real** que a Cloudflare informar. Nunca coloque credenciais no código.
-3. Inicialize as tabelas e publique:
-   ```sh
-   npm run db:remote
-   npm run deploy
-   ```
-4. No endereço do Worker, teste `/api/health`, crie uma conta no botão **CONTA**, salve o progresso e crie uma sala em **COOPERATIVO**. Salas usam WebSockets/Durable Objects e permitem até 4 pessoas com posição compartilhada e decisões por votos.
-5. Para integração GitHub → Workers Builds, utilize o comando build `npm run build` e deploy `npx wrangler deploy`, após configurar o D1. `npm run build` coloca apenas os 4 arquivos públicos em `dist/`.
-
-**Atenção:** D1 e Durable Objects exigem configuração real em sua conta, uma implantação correta e testes com usuários distintos. A publicação online e as sessões multiplayer reais **não foram executadas nesta entrega**. Combate com zumbis, inventário e dano continuam processados **localmente** em cada navegador; coop sincroniza apenas posições e escolhas da narrativa. O multiplayer ainda não é um servidor de combate autoritativo.
-
-## Comandos locais
+Esta funcionalidade **exige configuração e implantação na conta Cloudflare**. Não é ativada ao abrir `index.html` localmente.
 
 ```sh
 npm install
-npm run check
-npm run build
-npm run db:local
-npm run dev
+npx wrangler login
+npx wrangler d1 create ultima-transmissao-db
 ```
 
-## Arquivos do pacote
+Edite `wrangler.jsonc` substituindo `COLE_AQUI_O_ID_REAL_DO_SEU_D1` pelo `database_id` efetivamente fornecido pela Cloudflare e execute:
 
-- `index.html` — interface, comandos e menu.
-- `styles.css` — identidade visual, cenas animadas e responsividade.
-- `story.js` — roteiro, personagens, cenas e opções de 20 missões novas, além das cenas aprimoradas das primeiras dez.
-- `game.js` — motor do mundo aberto, cutscenes, escolhas, narrativas, salvamentos e cooperativo cliente.
-- `worker.js`, `schema.sql`, `wrangler.jsonc` — backend e serviços online.
-- `package.json`, `build.mjs` — ferramentas de desenvolvimento.
-- `.gitignore`, `.assetsignore` — exclusões.
-- `PROJETO.md` — enredo e critérios editoriais.
-- `VALIDACAO.md` — testes e limites.
+```sh
+npm run db:remote
+npm run deploy
+```
 
-Todos os arquivos listados estão **diretamente na raiz do ZIP**. Para publicar o projeto completo com Worker, o build copia apenas os arquivos públicos para `dist/`.
+Na URL publicada por Workers, confira `/api/health`, cadastre uma conta, use **CONTA** para sincronizar o salvamento, e teste **COOPERATIVO** com navegadores ou perfis separados. O Workers build pode usar `npm run build` e `npx wrangler deploy`. A tabela D1 e a classe Durable Object estão nos arquivos do projeto.
+
+**Limites técnicos do multiplayer**: até quatro clientes podem ver posições e votar em decisões de missão. O combate, o dano, os zumbis, o inventário e as decisões pessoais de flashback continuam processados localmente e não são sincronizados de forma autoritativa. A publicação online, cadastro real, salvamento D1 real e conexão WebSocket com vários usuários **não foram testados numa conta Cloudflare real** neste pacote. Consulte `VALIDACAO.md`.
+
+## Arquivos
+
+`index.html`, `styles.css`, `story.js`, `expansion.js`, `game.js`, `worker.js`, `schema.sql`, `wrangler.jsonc`, `package.json`, `build.mjs`, `.gitignore`, `.assetsignore`, `README.md`, `PROJETO.md`, `VALIDACAO.md` — **todos diretamente na raiz do ZIP**, sem pasta externa.

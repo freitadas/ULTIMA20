@@ -42,3 +42,13 @@
 .sidebar .relations{max-height:188px;overflow-y:auto;padding-right:3px}
 @media(max-width:740px){.cinema-stage{min-height:52vh}.cinema-caption{padding:28px 19px 30px}.modal .cinema-dialogue{font-size:18px;min-height:80px}.cinema-actions>span{flex-basis:100%;margin-right:0}.cinema-actions button{flex:1;padding:12px!important}.epilogue-grid{grid-template-columns:1fr}.chapter-progress{display:grid}.cast-list{max-height:56vh}}
 @media(prefers-reduced-motion:reduce){.cinema-stage:after,.cinema-signal,.cinema-caption,.cinema-skyline{animation:none!important}}
+
+/* V6 — lembranças e escolhas de memória */
+.tone-memory {background:radial-gradient(circle at 70% 20%,#b7a77a35,transparent 45%),repeating-linear-gradient(90deg,#1f211e 0px,#1f211e 5px,#13191b 6px,#13191b 8px);filter:sepia(.24)}
+.tone-memory .cinema-skyline{opacity:.42;filter:grayscale(1) sepia(.8)}
+.tone-memory .cinema-caption{border-color:#c9af76}.tone-memory .cinema-speaker{color:#e5c68e}
+.memory-film-label{position:absolute;top:20px;left:22px;z-index:4;border:1px solid #bba781;padding:8px 12px;color:#f2dfa9;background:#171a19dd;letter-spacing:3px;font-size:10px;font-weight:900}
+.flashback-choice{border-color:#a78f6688!important;background:linear-gradient(110deg,#3a3029,#18211b)!important}
+.flashback-choice:hover{border-color:#eac68d!important}
+
+.difficulty-select{border:1px solid #475e4d;padding:15px;margin-top:17px;background:#13221b}.difficulty-select strong{font-size:10px;letter-spacing:2px;color:#c4d49b}.difficulty-select p{font-size:12px;line-height:1.5}.difficulty-select .row{display:flex;gap:9px;flex-wrap:wrap}.difficulty-select button{flex:1;min-width:140px}

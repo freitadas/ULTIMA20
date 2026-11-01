@@ -30,7 +30,7 @@ async function handleApi(req,env,url){const path=url.pathname.slice(5),method=re
  if(path==='save'&&method==='GET'){const result=await env.DB.prepare('SELECT data,updated_at FROM saves WHERE user_id=?').bind(user.id).first();let save=null;try{if(result)save=JSON.parse(result.data)}catch{}return json({save,updatedAt:result?.updated_at||null})}
  if(path==='save'&&method==='POST'){
   const body=await readBody(req,55000),s=body.data;
-  if(!s||![4,5].includes(s.version)||!Number.isInteger(s.quest)||s.quest<0||s.quest>30||!Array.isArray(s.decisions)||s.decisions.length>30||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<0||s.x>3480||s.y<0||s.y>2450)return json({error:'Salvamento inválido.'},400);
+  if(!s||![4,5,6].includes(s.version)||!Number.isInteger(s.quest)||s.quest<0||s.quest>78||!Array.isArray(s.decisions)||s.decisions.length>78||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<0||s.x>5200||s.y<0||s.y>3500)return json({error:'Salvamento inválido.'},400);
   const saved=JSON.stringify(s);if(saved.length>49000)return json({error:'Salvamento ultrapassa o limite.'},413);
   await env.DB.prepare('INSERT INTO saves(user_id,data,updated_at) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET data=excluded.data,updated_at=excluded.updated_at').bind(user.id,saved,Date.now()).run();return json({ok:true});
  }
@@ -68,7 +68,55 @@ const allowed=[
  ["signal_full", "signal_safe", "signal_burn"],
  ["path_tunnel", "path_bridge", "path_stay"],
  ["final_evac", "final_truth", "final_rebuild"]
-];
+,
+ ["c8m1_1", "c8m1_2", "c8m1_3"],
+ ["c8m2_1", "c8m2_2", "c8m2_3"],
+ ["c8m3_1", "c8m3_2", "c8m3_3"],
+ ["c8m4_1", "c8m4_2", "c8m4_3", "c8m4_4"],
+ ["c8m5_1", "c8m5_2", "c8m5_3"],
+ ["c8m6_1", "c8m6_2", "c8m6_3"],
+ ["c9m1_1", "c9m1_2", "c9m1_3"],
+ ["c9m2_1", "c9m2_2", "c9m2_3"],
+ ["c9m3_1", "c9m3_2", "c9m3_3"],
+ ["c9m4_1", "c9m4_2", "c9m4_3"],
+ ["c9m5_1", "c9m5_2", "c9m5_3"],
+ ["c9m6_1", "c9m6_2", "c9m6_3"],
+ ["c10m1_1", "c10m1_2", "c10m1_3"],
+ ["c10m2_1", "c10m2_2", "c10m2_3"],
+ ["c10m3_1", "c10m3_2", "c10m3_3", "c10m3_4"],
+ ["c10m4_1", "c10m4_2", "c10m4_3"],
+ ["c10m5_1", "c10m5_2", "c10m5_3"],
+ ["c10m6_1", "c10m6_2", "c10m6_3"],
+ ["c11m1_1", "c11m1_2", "c11m1_3"],
+ ["c11m2_1", "c11m2_2", "c11m2_3"],
+ ["c11m3_1", "c11m3_2", "c11m3_3"],
+ ["c11m4_1", "c11m4_2", "c11m4_3"],
+ ["c11m5_1", "c11m5_2", "c11m5_3", "c11m5_4"],
+ ["c11m6_1", "c11m6_2", "c11m6_3"],
+ ["c12m1_1", "c12m1_2", "c12m1_3", "c12m1_4"],
+ ["c12m2_1", "c12m2_2", "c12m2_3"],
+ ["c12m3_1", "c12m3_2", "c12m3_3"],
+ ["c12m4_1", "c12m4_2", "c12m4_3"],
+ ["c12m5_1", "c12m5_2", "c12m5_3"],
+ ["c12m6_1", "c12m6_2", "c12m6_3"],
+ ["c13m1_1", "c13m1_2", "c13m1_3"],
+ ["c13m2_1", "c13m2_2", "c13m2_3"],
+ ["c13m3_1", "c13m3_2", "c13m3_3"],
+ ["c13m4_1", "c13m4_2", "c13m4_3"],
+ ["c13m5_1", "c13m5_2", "c13m5_3", "c13m5_4"],
+ ["c13m6_1", "c13m6_2", "c13m6_3"],
+ ["c14m1_1", "c14m1_2", "c14m1_3"],
+ ["c14m2_1", "c14m2_2", "c14m2_3"],
+ ["c14m3_1", "c14m3_2", "c14m3_3", "c14m3_4"],
+ ["c14m4_1", "c14m4_2", "c14m4_3"],
+ ["c14m5_1", "c14m5_2", "c14m5_3"],
+ ["c14m6_1", "c14m6_2", "c14m6_3"],
+ ["c15m1_1", "c15m1_2", "c15m1_3"],
+ ["c15m2_1", "c15m2_2", "c15m2_3"],
+ ["c15m3_1", "c15m3_2", "c15m3_3"],
+ ["c15m4_1", "c15m4_2", "c15m4_3"],
+ ["c15m5_1", "c15m5_2", "c15m5_3"],
+ ["c15m6_1", "c15m6_2", "c15m6_3", "c15m6_4"]]
 export class GameRoom extends DurableObject {
  constructor(ctx,env){super(ctx,env);this.ctx=ctx;this.env=env;this.positions=new Map()}
  clients(){return this.ctx.getWebSockets()}
@@ -78,7 +126,7 @@ export class GameRoom extends DurableObject {
  presence(){this.emit({type:'presence',members:this.people().map(x=>x.name),positions:this.positionsSnapshot()})}
  async fetch(request){if(request.headers.get('Upgrade')?.toLowerCase()!=='websocket')return new Response('WebSocket obrigatório',{status:426});if(this.clients().length>=4)return new Response('Sala cheia: máximo quatro jogadores.',{status:429});const name=(request.headers.get('x-player-name')||'Sobrevivente').slice(0,20);const wsPair=new WebSocketPair();const [client,server]=Object.values(wsPair);this.ctx.acceptWebSocket(server);const id=crypto.randomUUID();server.serializeAttachment({id,name});const history=await this.ctx.storage.get('history')||[];server.send(JSON.stringify({type:'snapshot',you:id,members:this.people().map(x=>x.name),positions:this.positionsSnapshot(),history}));this.presence();return new Response(null,{status:101,webSocket:client})}
  async webSocketMessage(sock,raw){if(typeof raw!=='string'||raw.length>900)return;let data;try{data=JSON.parse(raw)}catch{return}const me=sock.deserializeAttachment();if(!me)return;
- if(data.type==='position'){const x=Number(data.x),y=Number(data.y);if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>3480||y<0||y>2450)return;this.positions.set(me.id,{x:Math.round(x),y:Math.round(y)});this.emit({type:'positions',positions:this.positionsSnapshot()});return}
+ if(data.type==='position'){const x=Number(data.x),y=Number(data.y);if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>5200||y<0||y>3500)return;this.positions.set(me.id,{x:Math.round(x),y:Math.round(y)});this.emit({type:'positions',positions:this.positionsSnapshot()});return}
  if(data.type==='vote'){
   const history=await this.ctx.storage.get('history')||[],q=history.length;
   if(q>=allowed.length||data.q!==q||!allowed[q].includes(data.option)){sock.send(JSON.stringify({type:'error',error:'Escolha não corresponde à missão compartilhada.'}));return}
