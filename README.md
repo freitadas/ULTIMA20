@@ -1,58 +1,84 @@
-# ÚLTIMA TRANSMISSÃO — V6.0 | A Saga das Vozes
+# ÚLTIMA TRANSMISSÃO V11.0 — MUNDO VIVO
 
-**Jogo 2D de mundo aberto, sobrevivência e narrativa interativa, em português.** Versão integral e autossuficiente sobre a V5.0: 15 capítulos, 78 missões sequenciais, 33 personagens com dossiê, 16 flashbacks com escolhas, 109 sequências de cutscene roteirizadas e 24 desfechos narrativos definidos, além da derrota. Inclui 7 alternativas narrativas especiais condicionadas a escolhas anteriores. Os números foram verificados no código-fonte e nos testes.
+Jogo brasileiro de apocalipse zumbi 2D, com exploração de mundo aberto, campanha narrativa, decisões permanentes e sistemas de sobrevivência, executável no navegador. Esta entrega consolida as melhorias previstas para V6.1 a V10.0 **numa única V11.0** sobre a base da V6.0.
 
-## Jogar
+## Iniciar imediatamente (offline, sem instalar nada)
 
-1. Extraia os arquivos do ZIP diretamente numa pasta.
-2. Abra **index.html** num navegador moderno para jogar em modo solo. Não é necessário instalar Node.js ou configurar a nuvem.
-3. Clique **INICIAR HISTÓRIA** ou **CONTINUAR CAMPANHA**. Use **WASD/setas** para andar, **E** para interagir com a missão marcada, **ESPAÇO** para corpo a corpo, **F** para disparar, **M** para mapa, **J** para diário e **Esc** para pausa. No celular, use os controles virtuais. Na tela inicial, selecione **HISTÓRIA** (menos ataques e desgaste, padrão) ou **SOBREVIVÊNCIA** (combate e necessidades mais exigentes).
-4. Em missões com flashback, avance pelo diálogo e selecione uma das três interpretações da memória. O passado não é reescrito; o sentido que Clara atribui à lembrança passa a constar do registro e pode influenciar cenas ou opções posteriores.
-5. Ao alcançar um objetivo, escolha como agir. Os fatos da escolha são gravados e podem repercutir dezenas de missões depois.
+1. Extraia os arquivos do ZIP **sem criar uma pasta externa no repositório**.
+2. Abra `index.html` com Chrome, Edge ou Firefox. Clique em **INICIAR HISTÓRIA**.
+3. Conclua as atividades da missão antes de tomar uma decisão; as atividades aparecem em **azul** e o local de decisão em **amarelo**.
+4. O jogo salva automaticamente no armazenamento local deste navegador. **Não use janela anônima para campanhas longas.**
 
-O mundo aberto é uma cidade 2D contínua ampliada para 5.200 × 3.500 unidades; exploração, combate, zumbis, coleta, dia/noite, inventário, vida, fome, sede e infecção foram preservados. As cutscenes são **cenas de diálogo estilizadas em HTML/CSS com efeitos sintetizados**. Não são vídeos 3D, cenas pré-renderizadas nem personagens dublados.
+## Recursos disponíveis nesta versão
 
-## Novidades da V6.0
+| Módulo | Implementação da V11.0 |
+|---|---|
+| Campanha narrativa | **15 capítulos**, **78 missões** e **33 personagens**, preservando a história e a estrutura de decisões da V6.0 |
+| Missões práticas | Oito arquétipos: recuperar pistas, resgatar/escoltar, defender posição, reparar, furtividade, retransmissão, eliminar infectados, abrir rota |
+| Conteúdo opcional | **8 eventos paralelos com escolhas** e recompensas/consequências distintas |
+| Interiores | **12 locais exploráveis**, com três interações e espólios persistentes por local |
+| Flashbacks | **16 lembranças exploráveis**, cada uma com três objetos e uma interpretação narrativa selecionada pelo jogador |
+| Aliados | Sofia, Nina, Raul e Helena podem acompanhar Clara quando os requisitos de confiança são atendidos; auxiliam em combates e podem ficar feridos |
+| Sobrevivência | Água, comida, kits, munição, infecção, saque, peças, tecido, curativos, iscas, barricadas e inventário |
+| Zumbis | Tipos básico, corredor e bruto; ruído de disparos, iscas e furtividade influenciam a perseguição |
+| Exploração | Cidade 5200 × 3500, minimapa, entradas, eventos, ciclo dia/noite, chuva estilizada e alterações visuais conforme decisões |
+| Cutscenes | Cenas estilizadas com diálogos, câmera, silhuetas, retratos simbólicos e efeitos sintetizados, além da opção de pular |
+| Finais | 24 definições narrativas herdadas da V6.0, duas condições especiais adicionais na V11.0 e possibilidade de morte. Nem todas foram exercitadas nos testes |
+| Salvamentos | Novo formato V11.0 com migração automática dos dados locais V4/V5/V6, sem apagar o salvamento antigo |
+| Contas | Código existente de autenticação e armazenamento remoto com Workers + D1, condicionado à implantação da infraestrutura |
+| Cooperativo | Código da V6.0 para salas até quatro jogadores, visualização das posições e votação coletiva. **Combate, zumbis e inventários não são sincronizados de modo autoritativo** |
 
-- **48 missões novas**, capítulos 8 a 15; 30 missões dos sete capítulos anteriores continuam integradas.
-- **20 personagens adicionais**, com histórias cruzadas (Alice, Olívia, Júlia, Samuel, Joana, Mara, Levi, Rosa, etc.).
-- **16 flashbacks com decisões** e interações desbloqueadas por pistas, resgates e relações.
-- **24 desfechos narrativos escritos** e epílogos individualizados, além da possibilidade de morte.
-- **Vínculos duradouros** com novos personagens, ramificações de diálogo condicionadas a fatos antigos, finais afetados por justiça, família, transparência, acolhimento e autoritarismo.
-- **Migração de salvamento solo da V5.0/V4.0**, sem excluir o progresso salvo anteriormente. A última cena da V5.0 vira a abertura do segundo arco, não o fim definitivo.
+## Comandos
 
-### Como funciona a continuidade
+| Tecla | Função |
+|---|---|
+| WASD / setas | Mover Clara |
+| E | Interagir, examinar objeto, entrar ou sair de edifício, iniciar atividade de missão |
+| Espaço | Golpe corpo a corpo |
+| F | Disparar arma |
+| Shift | Caminhar furtivamente (manter pressionado) |
+| Q | Esquiva de emergência, consome fôlego |
+| C | Fabricar equipamentos |
+| G | Escolher companheiros |
+| H | Aplicar curativo |
+| R | Arremessar isca sonora |
+| V | Instalar barricada previamente fabricada |
+| M / J | Mapa / Diário |
+| Esc | Pausar |
 
-A V6.0 grava o estado na chave `ut-v6-campaign`. Caso não exista, procura `ut-v5-campaign` e, depois, `ut-v4-campaign`. Se o jogo antigo terminou no capítulo 7 com 30 missões, a V6.0 abre a campanha a partir da **missão 31**, mantendo decisões, confiança, inventário e conquistas. A V5.0 original não é apagada. O salvamento na nuvem é convertido da mesma forma quando estiver autenticado.
+Em celulares, utilize o direcional e os botões **USAR, GOLPE, TIRO, PASSOS, CRIAR, EQUIPE e MOCHILA**. O botão PASSOS alterna furtividade no celular.
 
-## Publicar pela Cloudflare Pages — modo solo
+## Publicar via GitHub + Cloudflare Pages (modo solo)
 
-1. Envie os arquivos **extraídos** para a **raiz do repositório do GitHub** (exemplo: `freitadas/ULTIMA20`), e não apenas o ZIP.
-2. Cloudflare → Workers & Pages → **Pages** → importar repositório Git. Corrija uma eventual mensagem `Missing git connection` autorizando a integração GitHub.
-3. Framework: `None`; Build command: `npm run build`; Build output directory: `dist`; branch: `main` (se for a branch principal do repositório).
-4. Publique e abra o domínio `pages.dev` fornecido pelo serviço. `build.mjs` coloca somente `index.html`, `styles.css`, `story.js`, `expansion.js` e `game.js` na pasta `dist/`. As APIs online não funcionam em uma publicação exclusiva do Pages.
+1. Crie/atualize o repositório GitHub, por exemplo `freitadas/ULTIMA20`.
+2. Faça upload dos **15 arquivos da raiz do ZIP extraído**, não do ZIP fechado. O `index.html`, `package.json` e `build.mjs` devem estar na raiz do repositório.
+3. No painel da Cloudflare, acesse **Workers & Pages → Pages → Importar repositório Git**. Se aparecer **Missing git connection**, é necessário autorizar novamente a integração GitHub/Cloudflare.
+4. Escolha a branch principal (geralmente `main`). Configure **Framework preset** `None`, **Build command** `npm run build` e **Build output directory** `dist`.
+5. Publique. O site da Cloudflare Pages permite jogar a campanha solo, com salvamento local. Ele **não habilita automaticamente** login nem cooperativo.
 
-## Publicar o backend online — Workers, D1 e Durable Objects
+`npm run build` usa apenas APIs nativas do Node e copia o frontend para `dist/`. O diretório é gerado durante a publicação e **não está incluído no ZIP**.
 
-Esta funcionalidade **exige configuração e implantação na conta Cloudflare**. Não é ativada ao abrir `index.html` localmente.
+## Habilitar contas e cooperativo (Cloudflare Workers)
 
-```sh
+A estrutura original do projeto foi preservada: `worker.js`, `schema.sql` e `wrangler.jsonc`. Para usar esses serviços, é preciso criar e configurar o banco D1 na conta Cloudflare, preencher o identificador real em `wrangler.jsonc`, executar a migração SQL e implantar o Worker. Não existe ID real do banco dentro do pacote.
+
+```bash
 npm install
 npx wrangler login
 npx wrangler d1 create ultima-transmissao-db
-```
-
-Edite `wrangler.jsonc` substituindo `COLE_AQUI_O_ID_REAL_DO_SEU_D1` pelo `database_id` efetivamente fornecido pela Cloudflare e execute:
-
-```sh
+# Preencher em wrangler.jsonc o database_id devolvido pelo comando anterior.
 npm run db:remote
 npm run deploy
 ```
 
-Na URL publicada por Workers, confira `/api/health`, cadastre uma conta, use **CONTA** para sincronizar o salvamento, e teste **COOPERATIVO** com navegadores ou perfis separados. O Workers build pode usar `npm run build` e `npx wrangler deploy`. A tabela D1 e a classe Durable Object estão nos arquivos do projeto.
+Uma publicação apenas no Pages não substitui a implantação do Worker. O código do cooperativo sincroniza as **posições** e as **votações das decisões**; os ataques, dano, inventário e infectados continuam simulados individualmente. **O multiplayer completo e as funções online ainda não foram validados em ambiente real de produção.**
 
-**Limites técnicos do multiplayer**: até quatro clientes podem ver posições e votar em decisões de missão. O combate, o dano, os zumbis, o inventário e as decisões pessoais de flashback continuam processados localmente e não são sincronizados de forma autoritativa. A publicação online, cadastro real, salvamento D1 real e conexão WebSocket com vários usuários **não foram testados numa conta Cloudflare real** neste pacote. Consulte `VALIDACAO.md`.
+## Continuidade do progresso
 
-## Arquivos
+O salvamento V11 usa `ut-v11-campaign`. Quando não há salvamento V11, o jogo busca, nessa ordem, `ut-v6-campaign`, `ut-v5-campaign` e `ut-v4-campaign`. Os dados antigos não são apagados. A nova campanha preserva missões concluídas, escolhas, inventário, reputação, cutscenes vistas e flags existentes sempre que os dados são válidos. As funções inéditas recebem valores iniciais seguros.
 
-`index.html`, `styles.css`, `story.js`, `expansion.js`, `game.js`, `worker.js`, `schema.sql`, `wrangler.jsonc`, `package.json`, `build.mjs`, `.gitignore`, `.assetsignore`, `README.md`, `PROJETO.md`, `VALIDACAO.md` — **todos diretamente na raiz do ZIP**, sem pasta externa.
+## Arquivos do ZIP
+
+`index.html`, `styles.css`, `game.js`, `story.js`, `expansion.js`, `worker.js`, `schema.sql`, `wrangler.jsonc`, `package.json`, `build.mjs`, `.gitignore`, `.assetsignore`, `README.md`, `PROJETO.md`, `VALIDACAO.md`.
+
+**Arquivos soltos diretamente na raiz do ZIP.** Não é necessário instalar um framework JavaScript. O frontend foi desenvolvido sem bibliotecas externas para reduzir dependências.

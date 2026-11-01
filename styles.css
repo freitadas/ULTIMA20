@@ -52,3 +52,27 @@
 .flashback-choice:hover{border-color:#eac68d!important}
 
 .difficulty-select{border:1px solid #475e4d;padding:15px;margin-top:17px;background:#13221b}.difficulty-select strong{font-size:10px;letter-spacing:2px;color:#c4d49b}.difficulty-select p{font-size:12px;line-height:1.5}.difficulty-select .row{display:flex;gap:9px;flex-wrap:wrap}.difficulty-select button{flex:1;min-width:140px}
+/* V11 — novos indicadores, acesso a missões práticas e interfaces móveis */
+.v11-hud{position:absolute;left:15px;bottom:43px;z-index:2;max-width:calc(100% - 220px);background:#071811de;border:1px solid #51785e;padding:8px 12px;color:#d9edc9;font-size:10px;letter-spacing:.5px;font-weight:700;pointer-events:none}
+.mobile-actions button.active{background:#c1d99a!important;color:#102017!important}
+.modal button.choice:disabled{opacity:.48;cursor:not-allowed;transform:none}
+.modal button.choice:disabled:hover{filter:none;border-color:#52624f}
+.modal .info b{color:#e9f3cd}
+.quest-toast{box-shadow:0 12px 26px #0008}
+.modal .choices{scroll-margin-top:12px}
+@media(max-width:740px){.v11-hud{font-size:9px;left:9px;bottom:9px;max-width:calc(100% - 160px);padding:5px 7px}.mobile-actions{display:grid;grid-template-columns:repeat(2,minmax(55px,1fr));gap:4px;max-width:160px}.mobile-actions button{min-width:57px;height:39px;font-size:10px}.mobile-controls{bottom:30px}.interaction-hint{bottom:183px}.quest-toast{max-width:min(78vw,255px)}}
+@media(prefers-reduced-motion:reduce){.cinema-stage::after,.cinema-skyline,.cinema-caption{animation:none!important}}
+
+/* V11 — retratos dinâmicos, enquadramento dramático e movimentos de câmera */
+.cinema-stage{min-height:min(510px,70vh);box-shadow:inset 0 0 90px #000a}
+.cinema-stage .cinema-person{position:absolute;width:190px;height:250px;right:12%;bottom:18%;opacity:.63;filter:drop-shadow(-18px 5px 18px #000a);animation:cinema-zoom 6s ease-out both}
+.cinema-stage .cinema-head{position:absolute;display:block;left:60px;top:0;width:72px;height:84px;border-radius:46% 46% 40% 40%;background:linear-gradient(135deg,#939f8d,#354e44 65%);transform:rotate(-5deg)}
+.cinema-stage .cinema-shoulders{position:absolute;display:block;top:68px;left:10px;width:176px;height:186px;border-radius:70px 70px 12px 12px;background:linear-gradient(120deg,#6b8076,#1f3836 65%);transform:rotate(3deg)}
+.cinema-stage.tone-hospital .cinema-head{background:linear-gradient(130deg,#bcb5a6,#58787c)}
+.cinema-stage.tone-memory .cinema-person{filter:sepia(.8) blur(.4px);opacity:.45}
+.cinema-stage:has(.cinema-person) .cinema-caption{padding-bottom:46px}
+@media(max-width:740px){.cinema-stage .cinema-person{right:-20px;bottom:21%;transform:scale(.65);opacity:.39}.cinema-stage:has(.cinema-person) .cinema-caption{padding-bottom:28px}}
+/* Notificações não podem cobrir o objetivo principal nem as cutscenes */
+#toast-container{top:auto;bottom:64px;max-width:min(440px,78vw)}
+.toast{padding:9px 14px;font-size:11px;box-shadow:0 4px 20px #0008}
+@media(max-width:740px){#toast-container{bottom:165px;max-width:min(62vw,290px);left:50%}.toast{font-size:10px;padding:7px 9px}}

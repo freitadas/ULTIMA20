@@ -14,7 +14,7 @@ function cookie(t,maxAge=2592000,secure=true){return `ut_session=${t}; HttpOnly;
 const validName=x=>typeof x==='string'&&/^[a-zA-Z0-9_]{3,20}$/.test(x);
 const uid=()=>crypto.randomUUID();
 async function auth(req,env){if(!env.DB)return null;const raw=getCookie(req,'ut_session');if(!raw||!/^[a-f0-9]{64}$/.test(raw))return null;const digest=await sha(raw);return env.DB.prepare('SELECT users.id, users.username FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires_at>?').bind(digest,Date.now()).first()}
-async function readBody(req,limit=65536){if(Number(req.headers.get('content-length')||0)>limit)throw Error('Payload grande demais');const body=await req.text();if(body.length>limit)throw Error('Payload grande demais');try{return JSON.parse(body)}catch{throw Error('JSON inválido')}}
+async function readBody(req,limit=131072){if(Number(req.headers.get('content-length')||0)>limit)throw Error('Payload grande demais');const body=await req.text();if(body.length>limit)throw Error('Payload grande demais');try{return JSON.parse(body)}catch{throw Error('JSON inválido')}}
 async function rateLimit(env,req){const ip=(req.headers.get('cf-connecting-ip')||'unknown').slice(0,60);const key=await sha('auth:'+ip);const now=Date.now(),prev=await env.DB.prepare('SELECT started,count FROM auth_attempts WHERE id=?').bind(key).first();if(prev&&now-prev.started<3600000&&prev.count>=15) return false;if(!prev||now-prev.started>=3600000)await env.DB.prepare('INSERT INTO auth_attempts(id,started,count) VALUES (?,?,1) ON CONFLICT(id) DO UPDATE SET started=excluded.started,count=1').bind(key,now).run();else await env.DB.prepare('UPDATE auth_attempts SET count=count+1 WHERE id=?').bind(key).run();return true}
 async function handleApi(req,env,url){const path=url.pathname.slice(5),method=req.method;if(path==='health')return json({ok:true,database:!!env.DB,rooms:!!env.ROOMS});if(!env.DB)return json({error:'Banco D1 não configurado. A campanha solo continua disponível.'},503);
  if(path==='me'&&method==='GET')return json({user:await auth(req,env)});
@@ -30,8 +30,8 @@ async function handleApi(req,env,url){const path=url.pathname.slice(5),method=re
  if(path==='save'&&method==='GET'){const result=await env.DB.prepare('SELECT data,updated_at FROM saves WHERE user_id=?').bind(user.id).first();let save=null;try{if(result)save=JSON.parse(result.data)}catch{}return json({save,updatedAt:result?.updated_at||null})}
  if(path==='save'&&method==='POST'){
   const body=await readBody(req,55000),s=body.data;
-  if(!s||![4,5,6].includes(s.version)||!Number.isInteger(s.quest)||s.quest<0||s.quest>78||!Array.isArray(s.decisions)||s.decisions.length>78||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<0||s.x>5200||s.y<0||s.y>3500)return json({error:'Salvamento inválido.'},400);
-  const saved=JSON.stringify(s);if(saved.length>49000)return json({error:'Salvamento ultrapassa o limite.'},413);
+  if(!s||![4,5,6,11].includes(s.version)||!Number.isInteger(s.quest)||s.quest<0||s.quest>78||!Array.isArray(s.decisions)||s.decisions.length>78||!Number.isFinite(s.x)||!Number.isFinite(s.y)||s.x<0||s.x>5200||s.y<0||s.y>3500)return json({error:'Salvamento inválido.'},400);
+  const saved=JSON.stringify(s);if(saved.length>120000)return json({error:'Salvamento ultrapassa o limite.'},413);
   await env.DB.prepare('INSERT INTO saves(user_id,data,updated_at) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET data=excluded.data,updated_at=excluded.updated_at').bind(user.id,saved,Date.now()).run();return json({ok:true});
  }
  return json({error:'Rota inexistente.'},404);
