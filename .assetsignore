@@ -1,0 +1,16 @@
+# Somente os arquivos públicos devem ser distribuídos ao navegador.
+worker.js
+wrangler.jsonc
+schema.sql
+package.json
+package-lock.json
+README.md
+PROJETO.md
+VALIDACAO.md
+.gitignore
+.assetsignore
+node_modules/
+node_modules/**
+.git/
+.git/**
+*.zip

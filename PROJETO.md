@@ -1,136 +1,67 @@
-# ÚLTIMA TRANSMISSÃO — documento do projeto
+# PROJETO CONSOLIDADO — ÚLTIMA TRANSMISSÃO V4.0
 
-**Gênero:** aventura narrativa de apocalipse zumbi, escolhas com consequências, gerenciamento leve de sobrevivência.  
-**Público:** jogadores de navegador interessados em suspense, histórias ramificadas e campanhas curtas.  
-**Plataformas:** navegador desktop e celular; interface em português do Brasil.  
-**Modelo de acesso V1.0:** jogo gratuito, solo, sem cadastro e sem compras.
+## Premissa
 
-## 1. Identidade e premissa
+A protagonista Clara Mendes é uma socorrista durante o surto na cidade fictícia de Porto Cinza. Sua missão é reagrupar sobreviventes, investigar o surto e alcançar a última rota de resgate. O jogador pode escolher ajudar pessoas ou preservar os recursos para si. O conjunto de decisões condiciona o final.
 
-**Nome:** ÚLTIMA TRANSMISSÃO.  
-**Temporada 1:** A Queda de Porto Cinza.  
-**Capítulo 1:** Sinal Perdido.  
-**Protagonista:** Clara, socorrista.  
-**Personagens:** Nina (adolescente), Dra. Sofia (coordenadora do abrigo), Posto Horizonte (equipe externa de resgate).  
-**Conflito:** a cidade isolada entrou em colapso e uma torre de rádio ainda pode pedir socorro. A sobrevivência individual entra em choque com a responsabilidade coletiva.
+## Mecânica principal
 
-Tom: suspense, dilemas morais, escassez, vínculos pessoais. O objetivo não é exterminar hordas, mas sobreviver, decidir sob pressão e administrar consequências.
+Ciclo: explorar mundo aberto → desviar ou enfrentar zumbis → coletar suprimentos → chegar ao objetivo → escolher uma rota narrativa → obter consequências e XP → desbloquear nova missão ou área.
 
-## 2. Pilares de design
+A interface combina Canvas top-down, HUD vital, painel de inventário e relações, mapa operacional, diário e menus narrativos. Não usa imagens, fonts ou serviços externos para a campanha solo.
 
-1. **Escolhas significativas:** cada decisão altera recursos, estado do mundo, disponibilidade de ações, confiança ou final.
-2. **Escassez compreensível:** saúde, infecção, barulho, alimentação, kits, ferramentas e munição visíveis durante toda a partida.
-3. **História reaproveitável:** cenas e escolhas em objetos de dados; novos capítulos não precisam reescrever o motor.
-4. **Partidas curtas:** o primeiro capítulo deve ser concluível em uma sessão, com rotas alternativas e desfechos distintos.
-5. **Transparência:** custo e requisitos das escolhas aparecem antes da decisão.
+## Sobrevivência e sistemas
 
-## 3. Mecânicas V1.0 — implementadas
+- Movimento WASD/setas ou controle touch, com obstáculos em estruturas.
+- 2 áreas conectadas de aproximadamente 2.800 × 1.880 unidades de mundo, com bairros, avenidas, casas, árvores e carros abandonados.
+- 10 pontos de missão com interações espaciais e 30 alternativas narrativas ao todo; algumas escolhas dependem de suprimentos ou flags anteriores.
+- Infecção, vida, fome, sede, comida, água, kits médicos, munição.
+- Zumbis em perseguição por proximidade, corpo a corpo, disparos automáticos ao alvo mais próximo e recompensas por eliminação.
+- Baús coletáveis em todo o mapa e efeitos sonoros sem download de ativos externos.
+- Sistema de nível/XP, oito conquistas, registro de decisões, salvamento automático local e cloud save autenticado opcional.
+- Dia/noite baseado no tempo de jogo e progressão dos objetivos.
+- Mundo pausado nos menus, como convenção de campanha solo. Nas salas multiplayer, o combate do cliente fica pausado ao abrir as escolhas.
 
-- História interativa por cenas e decisões; atalhos de teclado 1–4.
-- Sete objetivos narrativos (missões numeradas 01–07) em seis regiões.
-- Rotas alternativas e escolhas bloqueadas de acordo com recursos e descobertas.
-- Saúde (0 a 100); infecção (0 a 100); barulho/ameaça (0 a 100).
-- Inventário: alimentos, kits médicos, ferramentas e munição.
-- Uso de kits médicos para recuperar saúde e reduzir infecção.
-- Ações ruidosas com ameaça a partir de 75 provocam ataques adicionais.
-- Bandeiras narrativas persistidas: código de emergência, Nina resgatada, abrigo ajudado, barricadas reforçadas, feridos tratados, energia restaurada, sinal estabelecido ou instável.
-- Relógio interno e registro cronológico de decisões.
-- Sete epílogos possíveis, incluindo um de derrota, com registro local de epílogos descobertos.
-- Salvamento automático após cada decisão e retomada no mesmo navegador.
-- Painel com mapa ilustrativo, mochila, diário, estado vital e objetivo atual.
-- Layout adaptado a desktop e celular; sem bibliotecas externas e sem conexão obrigatória.
+## Missões
 
-**Fora da V1:** mundo aberto navegável por WASD, combate em tempo real, geração procedural, cadastro, multiplayer, sincronização entre dispositivos, trilha sonora, missões diárias e compras. Nenhum desses recursos é anunciado como existente no protótipo.
+| # | Capítulo | Missão | Local | Decisão central |
+|---|---|---|---|---|
+| 1 | 1 | Sinais no hospital | Hospital Municipal | Atender feridos / obter suprimentos / procurar rota |
+| 2 | 1 | Uma voz na farmácia | Bairro Velho | Salvar ou abandonar Nina |
+| 3 | 1 | O acordo da oficina | Zona Industrial | Negociar, colaborar ou enfrentar Raul |
+| 4 | 1 | A última noite no abrigo | Abrigo Esperança | Alimentar, defender ou abandonar a comunidade |
+| 5 | 1 | A frequência perdida | Subestação Norte | Restaurar, sobrecarregar ou abandonar o sinal |
+| 6 | 2 | O bloqueio da fronteira | Posto de Controle | Investigar, socorrer ou saquear |
+| 7 | 2 | Ecos dentro da escola | Escola República | Salvar crianças, copiar mapa ou bloquear entrada |
+| 8 | 2 | A torre de transmissão | Colina do Rádio | Proteger grupo, contar a verdade ou salvar-se |
+| 9 | 2 | A verdade no laboratório | Instituto Helix | Pesquisar tratamento, salvar evidências ou destruir dados |
+| 10 | 2 | A última transmissão | Píer do Horizonte | Evacuar juntos, transmitir a verdade ou fugir sozinho |
 
-## 4. Estrutura do capítulo inicial
+Desfechos planejados e implementados: Amanhecer coletivo; Promessa cumprida; A verdade sobrevive; A última testemunha; Sobrevivente solitária; A noite não acabou; morte por vida/infecção.
 
-| Missão | Região | Decisão-chave |
-|---|---|---|
-| 01 · A Ruptura | Apartamento | Recolher kit, descobrir frequência ou sair depressa |
-| 02 · Avenida dos Ecos | Avenida | Resgatar Nina, coletar itens ou fugir |
-| 03 · Remédios para o Amanhã | Farmácia | Invadir, negociar, arriscar o depósito ou seguir |
-| 04 · O Abrigo | Ginásio | Compartilhar recursos, reforçar defesas ou preservar suprimentos |
-| 05 · A Última Centelha | Subestação | Restaurar energia ou assumir sinal instável |
-| 06 · Frequência Morta | Torre | Entrar na torre e escolher como transmitir |
-| 07 · A Escolha Final | Torre/Praça | Evacuar o grupo, priorizar Nina ou fugir |
+## Relações e escolhas herdadas
 
-Desfechos: **Ainda existe amanhã**, **O preço de não desistir**, **A promessa cumprida**, **Uma voz só**, **A noite não terminou**, **Fora do mapa**, **O último chamado**.
+Três personagens com reputação 0–100: Nina, Sofia e Raul. As flags da campanha impactam alternativas disponíveis (por exemplo, restabelecer o sinal com aliado; obter tratamento mediante código ou passagem descoberta) e desfechos. Os dados são persistidos em saves locais/online.
 
-## 5. Interface — V1.0
-
-- Tela de apresentação: nova campanha, continuar campanha, como jogar.
-- Cabeçalho: logo, capítulo, dia/hora, status de salvamento, ajuda e menu.
-- Coluna principal: localização, arte CSS, narração, fala de personagens, escolhas e custos.
-- Barra lateral: saúde, infecção, ameaça, recursos, confiança e objetivo.
-- Abas: mapa de progresso, inventário, diário de decisões.
-- Tela final: epílogo, quantidade de epílogos encontrados e reiniciar.
-
-Paleta: carvão, verde musgo, amarelo pálido e vermelho de alerta. Fonte do sistema, sem download de fontes; estilo de painel de emergência.
-
-## 6. Plano de versões
-
-| Versão | Resultado esperado | Dependências |
-|---|---|---|
-| **V1.0 — Sinal Perdido** | Capítulo completo jogável, 7 missões, decisões, recursos, 7 finais, salvamento local | HTML/CSS/JS e Cloudflare Pages |
-| **V1.1 — Polimento** | Balanceamento das rotas, revisão de diálogos, acessibilidade, feedback dos testes e áudio opcional | Testes com usuários |
-| **V1.2 — Repercussões** | Consequências mais complexas, árvore de decisões, novo painel de relações, estatísticas da partida | Motor narrativo V1 |
-| **V2.0 — O Segundo Dia** | Capítulo 2, novas áreas, decisões herdadas da campanha, personagens e finais de temporada | Esquema de progresso versionado |
-| **V2.1 — Sobrevivência** | Estados persistentes mais profundos, medos, fadiga, traumas, escassez por cenário | Balanceamento |
-| **V3.0 — Comunidade** | Conta opcional, salvamento remoto, conquistas e rankings não competitivos | Workers + D1 + autenticação segura |
-| **V3.1 — Escolhas da Comunidade** | Desafios semanais com cenários comuns, percentuais agregados de escolhas | API e privacidade |
-| **V4.0 — Histórias compartilhadas** | Campanhas cooperativas assíncronas e decisões por votação (se validadas) | Durable Objects / WebSockets |
-
-Multiplayer só entra quando a campanha solo estiver estável; não é requisito do primeiro lançamento.
-
-## 7. Arquitetura GitHub + Cloudflare
-
-### V1.0 (implantada no ZIP)
+## Arquitetura Cloudflare
 
 ```text
-GitHub (repositório estático)
-    |
-    | push/commit
-    v
-Cloudflare Pages (entrega de HTML/CSS/JS)
-    |
-    v
-Navegador do jogador
-    |-- motor narrativo em JavaScript
-    |-- interface responsiva
-    `-- localStorage (campanha e finais descobertos)
+GitHub: freitadas/ULTIMA20 (repositório existente visto no histórico)
+    └── código-fonte estático e backend (arquivos na raiz)
+         |
+         └── Cloudflare Workers Builds / Wrangler CLI
+                └── Worker "ultima20" (assets + rotas API + WebSocket)
+                      ├── ASSETS: dist/ (index.html, game.js, styles.css), gerados por build.mjs
+                      ├── D1: users, sessions, saves, auth_attempts
+                      └── Durable Objects: salas com votos, posições e histórico
 ```
 
-**Não há backend na V1.0**, e o progresso salvo no navegador não acompanha o usuário em outros dispositivos. Limpar os dados do site também apaga o progresso. Não publicar tokens ou chaves privadas no repositório.
+Endpoints implementados: `GET /api/health`, `GET /api/me`, `POST /api/register`, `POST /api/login`, `POST /api/logout`, `GET /api/save`, `POST /api/save`, e `GET /ws/CODIGO?name=NOME` com upgrade WebSocket.
 
-### V3+ (planejada, não implementada)
+Autenticação: cookie de sessão com `HttpOnly`, `SameSite=Strict`, `Secure` em HTTPS; tokens aleatórios guardados somente como SHA-256 no D1; senhas derivadas por PBKDF2 SHA-256 com salt e 210.000 iterações; controle simples de tentativas por origem de IP. A API exige origem coincidente em POST. Registros de salvamento são vinculados a contas.
 
-```text
-Cloudflare Pages (cliente)
-    |
-Cloudflare Workers (API autenticada e validação)
-    |-- D1: perfis, progresso e decisões
-    `-- Durable Objects: sessões cooperativas em tempo real, se houver
-```
+Cooperação: grupos de até quatro por código, posições propagadas aos participantes e votos da missão; histórico de decisões fica no armazenamento do Durable Object, mantendo o capítulo ao reconectar. Inimigos continuam locais — evolução futura exigiria servidor autoritativo para PvE real sincronizado.
 
-Não confiar em resultados de ranking enviados pelo cliente sem validação no servidor. Aplicar limites de requisição, autenticação segura e migrações de banco.
+## Próximos requisitos para operação pública robusta
 
-## 8. Critérios de aceite V1.0
-
-1. Abrir `index.html` e iniciar campanha sem instalação de bibliotecas.
-2. Exibir opções bloqueadas quando faltar recurso ou informação.
-3. Alterar inventário, saúde, confiança e status após escolhas.
-4. Avançar pelas sete missões até um epílogo.
-5. Reiniciar e concluir a campanha por rota diferente, chegando a um resultado distinto.
-6. Recarregar a página e retomar pelo botão **Continuar história**.
-7. Usar a interface com mouse, toque e teclas numéricas.
-8. Não haver dependências de serviços externos, login, moedas reais ou anúncios.
-9. Publicar no Cloudflare Pages com conteúdo estático a partir da raiz do repositório.
-
-## 9. Backlog além do MVP
-
-- Confirmar duração real da campanha e taxa de conclusão após testes.
-- Adicionar efeitos sonoros opcionais com controle de volume e sem reprodução automática.
-- Adicionar sistema de capítulos com migração do salvamento local.
-- Preparar tradução e adaptação a leitores de tela por revisão especializada.
-- Testar maior variabilidade da infecção e da ameaça; nesta versão ambos são indicadores de risco e a infecção pode levar à derrota, mas não existe uma IA de perseguição em tempo real.
-- Construir editor de cenas e validador automatizado de árvore narrativa.
+Implantar e executar os testes integrais de Worker/D1/DO na própria conta Cloudflare; limites por conexão e monitoramento; proteção contra adulteração de progresso; reconexão/reentrada em votação; limpeza de sessões expiradas; testes de concorrência; acessibilidade ampliada; sistema de recuperação de contas. Não afirmar que essas tarefas foram realizadas nesta V4.0.

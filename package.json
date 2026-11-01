@@ -1,0 +1,17 @@
+{
+  "name": "ultima-transmissao-v4",
+  "version": "4.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "db:local": "wrangler d1 execute ultima-transmissao-db --local --file=./schema.sql",
+    "db:remote": "wrangler d1 execute ultima-transmissao-db --remote --file=./schema.sql",
+    "check": "node --check game.js && node --check worker.js",
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

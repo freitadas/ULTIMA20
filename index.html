@@ -1,75 +1,50 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0a100f">
-  <meta name="description" content="ÚLTIMA TRANSMISSÃO: uma aventura narrativa zumbi em que cada escolha tem consequências.">
-  <title>ÚLTIMA TRANSMISSÃO — V1.0</title>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#09110e"><meta name="description" content="ÚLTIMA TRANSMISSÃO — sobrevivência zumbi em mundo aberto, história, escolhas e cooperação.">
+  <title>ÚLTIMA TRANSMISSÃO | Mundo Aberto — V4.0</title>
   <link rel="stylesheet" href="styles.css">
-  <script defer src="game.js"></script>
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-  <section class="welcome" id="welcome" aria-labelledby="welcome-title">
-    <div class="welcome-scene" aria-hidden="true"><div class="sun"></div><div class="buildings"></div><div class="foreground"></div></div>
-    <div class="welcome-content">
-      <div class="eyebrow"><span class="signal-dot"></span> PROTOCOLO DE EMERGÊNCIA // PORTO CINZA</div>
-      <div class="brand-kicker">UMA HISTÓRIA INTERATIVA DE SOBREVIVÊNCIA</div>
-      <h1 id="welcome-title">ÚLTIMA<br><em>TRANSMISSÃO</em><span class="title-period">.</span></h1>
-      <p class="welcome-summary">A cidade caiu. O rádio ainda funciona. Você tem uma noite para decidir quem vai sair vivo.</p>
-      <div class="welcome-meta"><span>CAPÍTULO 01 · SINAL PERDIDO</span><span>V1.0</span><span>JOGO SOLO · OFFLINE</span></div>
-      <div class="welcome-buttons"><button class="primary big" id="start-btn">INICIAR NOVA HISTÓRIA <span aria-hidden="true">↗</span></button><button class="secondary big" id="continue-btn" hidden>CONTINUAR HISTÓRIA <span aria-hidden="true">→</span></button><button class="ghost big" id="intro-help">COMO JOGAR <span aria-hidden="true">?</span></button></div>
-      <p class="fine-print">Suas escolhas mudam o destino dos personagens. O progresso é salvo automaticamente neste navegador.</p>
-    </div>
-    <div class="welcome-footer"><span>FREQUÊNCIA 101.7 MHz</span><span class="waveform">▁▂▄▆▃▇▅▃▂▄▇▅▃▁▂</span><span>NINGUÉM RESPONDE. AINDA.</span></div>
-  </section>
-
-  <div class="app" id="app" hidden>
+  <div id="app">
     <header class="topbar">
-      <div class="top-logo"><span class="logo-bug">UT<span class="logo-red">.</span></span><div><strong>ÚLTIMA TRANSMISSÃO</strong><small>CAPÍTULO 01 — SINAL PERDIDO</small></div></div>
-      <div class="top-center"><span class="live-label"><span class="signal-dot"></span> SOBREVIVENTE ATIVO</span><span id="clock">DIA 01 · 03:40</span></div>
-      <div class="top-actions"><span id="save-status">SALVAMENTO LOCAL</span><button id="help-btn" class="icon-btn" aria-label="Como jogar" title="Como jogar">?</button><button id="exit-btn" class="small-btn" title="Voltar ao menu">MENU</button></div>
+      <div class="brand"><span class="brand-mark">UT<span>°</span></span><div><strong>ÚLTIMA TRANSMISSÃO</strong><small>PORTO CINZA / PROTOCOLO DE EMERGÊNCIA</small></div></div>
+      <div class="top-status"><span class="signal"><i></i> SINAL INSTÁVEL</span><span id="clock">DIA 01 · 06:40</span><span id="net-status">MODO SOLO</span></div>
+      <div class="top-buttons"><button id="btn-sound" class="icon-btn" title="Áudio">♪</button><button id="btn-account" class="quiet">CONTA</button><button id="btn-room" class="quiet">COOPERATIVO</button><button id="btn-menu" class="outline">☰ MENU</button></div>
     </header>
-
-    <main class="game-layout">
-      <section class="story-column" aria-label="História interativa">
-        <div class="chapter-top"><div><span class="tag" id="act-badge">MISSÃO 01 / 06</span><p id="location-title" class="location-title">APARTAMENTO 208 / PORTO CINZA</p></div><div class="progress-block"><span id="progress-label">0% DA CAMPANHA</span><div class="progress-track"><div id="progress-fill"></div></div></div></div>
-        <div class="scene-visual" id="scene-visual"><div class="scene-moon"></div><div class="scene-skyline"></div><div class="scene-texture"></div><div class="scene-visual-caption"><span id="scene-zone-label">SETOR 01 / ZONA RESIDENCIAL</span><span id="scene-visual-status">SINAL INTERMITENTE</span></div></div>
-        <article class="story-card" id="story-card">
-          <div class="scene-index"><span class="indicator-bars">▂▄▇▃▅</span><span id="scene-index-label">REGISTRO 001</span></div>
-          <h2 id="scene-title"></h2>
-          <div class="scene-text" id="scene-text" aria-live="polite"></div>
-          <div id="dialogue" class="dialogue" hidden><span class="dialogue-speaker" id="dialogue-speaker"></span><p id="dialogue-text"></p></div>
-          <div class="decision-header"><span>QUAL É SUA DECISÃO?</span><span>ESCOLHA UMA AÇÃO</span></div>
-          <div class="choices" id="choices"></div>
-          <p class="keyboard-hint">ATALHOS: TECLAS 1–4 PARA ESCOLHER · SALVAMENTO AUTOMÁTICO</p>
-        </article>
+    <main class="layout">
+      <section class="game-area" aria-label="Mundo aberto">
+        <div class="scene-title"><span class="dot"></span><span id="region">ZONA DE EVACUAÇÃO</span><span class="pill">MUNDO ABERTO</span></div>
+        <canvas id="game" aria-label="Mapa do jogo de sobrevivência" tabindex="0"></canvas>
+        <div class="quest-toast"><div class="quest-index" id="quest-index">MISSÃO 01 / 10</div><strong id="quest-title">Em busca de respostas</strong><span id="quest-hint">Vá até o local marcado em amarelo.</span><span id="quest-distance"></span></div>
+        <div class="compass"><span id="compass-text">N ↑</span></div>
+        <div class="controls-hint">WASD mover <b>•</b> E interagir <b>•</b> ESPAÇO atacar <b>•</b> F atirar <b>•</b> M mapa</div>
+        <div id="interaction-hint" class="interaction-hint hidden">[ E ] INTERAGIR</div>
+        <div id="damage-flash"></div>
+        <div class="mobile-controls" id="mobile-controls"><div class="dpad"><button data-move="up" aria-label="Cima">▲</button><div><button data-move="left" aria-label="Esquerda">◀</button><button data-move="down" aria-label="Baixo">▼</button><button data-move="right" aria-label="Direita">▶</button></div></div><div class="mobile-actions"><button id="touch-bag">MOCHILA</button><button id="touch-interact">USAR</button><button id="touch-melee">GOLPE</button><button id="touch-shoot">TIRO</button></div></div>
       </section>
-
-      <aside class="sidebar" aria-label="Painel de sobrevivência">
-        <div class="sidebar-heading"><span>ESTADO DE SOBREVIVÊNCIA</span><span id="risk-label">RISCO MODERADO</span></div>
-        <div class="vital-list">
-          <div class="vital"><div class="vital-head"><span>♥ INTEGRIDADE FÍSICA</span><strong id="health-value">86 / 100</strong></div><div class="meter"><div class="bar-green" id="health-bar"></div></div></div>
-          <div class="vital"><div class="vital-head"><span>◈ NÍVEL DE INFECÇÃO</span><strong id="infection-value">6 / 100</strong></div><div class="meter"><div class="bar-orange" id="infection-bar"></div></div></div>
-          <div class="vital"><div class="vital-head"><span>⌁ BARULHO / AMEAÇA</span><strong id="noise-value">15 / 100</strong></div><div class="meter"><div class="bar-red" id="noise-bar"></div></div></div>
+      <aside class="sidebar" id="sidebar"><button id="close-sidebar" class="close-sidebar" aria-label="Fechar mochila">FECHAR ×</button><div class="section-caption">STATUS DO SOBREVIVENTE <span>CLARA / SOCORRISTA</span></div>
+        <div class="avatar-line"><div class="portrait">C</div><div><strong>Clara Mendes</strong><small id="rank">NÍVEL 01 · SOBREVIVENTE</small></div><span id="chapter-label" class="chip">CAP. 1</span></div>
+        <div class="meters">
+          <div><div class="stat-label"><span>VIDA</span><b id="health-value">100/100</b></div><div class="meter"><i id="health-bar" class="health"></i></div></div>
+          <div><div class="stat-label"><span>FOME</span><b id="hunger-value">100%</b></div><div class="meter"><i id="hunger-bar" class="food"></i></div></div>
+          <div><div class="stat-label"><span>SEDE</span><b id="thirst-value">100%</b></div><div class="meter"><i id="thirst-bar" class="water"></i></div></div>
+          <div><div class="stat-label"><span>INFECÇÃO</span><b id="infection-value">0%</b></div><div class="meter"><i id="infection-bar" class="infection"></i></div></div>
         </div>
-        <div class="supplies"><div><small>ALIMENTOS</small><strong id="food-value">02</strong></div><div><small>KITS MÉDICOS</small><strong id="meds-value">01</strong></div><div><small>FERRAMENTAS</small><strong id="parts-value">00</strong></div><div><small>MUNIÇÃO</small><strong id="ammo-value">02</strong></div></div>
-        <button id="use-med-btn" class="med-btn" title="Gasta 1 kit médico; recupera até 25 de saúde e reduz 12 de infecção, consumindo 10 minutos">+ USAR KIT MÉDICO · CURAR-SE</button>
-        <div class="trust-strip"><span>CONFIANÇA DO GRUPO</span><strong id="trust-value">NEUTRA</strong></div>
-        <div class="mission"><span class="sidebar-overline">OBJETIVO ATUAL</span><h3 id="mission-title">01 · A FUGA</h3><p id="mission-description"></p><div class="mission-status"><span class="tiny-dot"></span> EM ANDAMENTO</div></div>
-        <div class="intel-panel">
-          <div class="tabs" role="tablist" aria-label="Painéis"><button class="tab active" id="tabbtn-map" role="tab" aria-selected="true" aria-controls="tab-map" data-tab="map">MAPA</button><button class="tab" id="tabbtn-pack" role="tab" aria-selected="false" aria-controls="tab-pack" data-tab="pack">MOCHILA</button><button class="tab" id="tabbtn-journal" role="tab" aria-selected="false" aria-controls="tab-journal" data-tab="journal">DIÁRIO</button></div>
-          <div class="tab-content" id="tab-map" role="tabpanel" aria-labelledby="tabbtn-map"><div class="map-grid"><svg viewBox="0 0 300 174" aria-label="Mapa com seis locais da história" role="img"><path class="map-road" d="M28 119 L80 64 L123 102 L181 48 L240 78 L270 28"/><path class="map-road faded" d="M16 26 L87 64 L187 128 L240 78 M123 102 L170 149"/><g class="map-node" data-zone="moradia" transform="translate(28 119)"><circle r="11"/><text x="0" y="3">1</text></g><g class="map-node" data-zone="avenida" transform="translate(80 64)"><circle r="11"/><text y="3">2</text></g><g class="map-node" data-zone="farmacia" transform="translate(123 102)"><circle r="11"/><text y="3">3</text></g><g class="map-node" data-zone="abrigo" transform="translate(181 48)"><circle r="11"/><text y="3">4</text></g><g class="map-node" data-zone="subestacao" transform="translate(240 78)"><circle r="11"/><text y="3">5</text></g><g class="map-node" data-zone="torre" transform="translate(270 28)"><circle r="11"/><text y="3">6</text></g><text class="map-name" x="12" y="147">MORADIA</text><text class="map-name" x="47" y="39">AVENIDA</text><text class="map-name" x="86" y="129">FARMÁCIA</text><text class="map-name" x="150" y="24">ABRIGO</text><text class="map-name" x="200" y="108">ENERGIA</text><text class="map-name" x="246" y="14">TORRE</text></svg></div><p class="map-caption">Os pontos iluminados indicam seu avanço na cidade.</p></div>
-          <div class="tab-content" id="tab-pack" role="tabpanel" aria-labelledby="tabbtn-pack" hidden><ul class="pack-list" id="pack-list"></ul><p class="map-caption">Itens são usados automaticamente nas decisões correspondentes.</p></div>
-          <div class="tab-content" id="tab-journal" role="tabpanel" aria-labelledby="tabbtn-journal" hidden><ol class="journal-list" id="journal-list"></ol></div>
-        </div>
-        <footer class="sidebar-footer">PORTO CINZA // CONEXÃO DE EMERGÊNCIA <span>V1.0</span></footer>
+        <div class="section-caption resources-title">MOCHILA <span>SUPRIMENTOS</span></div>
+        <div class="resource-grid"><button data-use="food"><span>▣</span><b id="food-value">3</b><small>COMIDA</small></button><button data-use="water"><span>◈</span><b id="water-value">3</b><small>ÁGUA</small></button><button data-use="medkit"><span>✚</span><b id="medkit-value">2</b><small>KITS</small></button><button data-use="ammo"><span>◉</span><b id="ammo-value">12</b><small>MUNIÇÃO</small></button></div>
+        <div class="section-caption resources-title">ALIANÇAS <span>RELAÇÕES</span></div>
+        <div class="relations" id="relations"></div>
+        <div class="section-caption resources-title">REGISTRO <span id="achievement-count">0/8 CONQUISTAS</span></div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="sidebar-footer"><button id="btn-map">MAPA [M]</button><button id="btn-journal">DIÁRIO [J]</button><button id="btn-help">AJUDA</button></div>
       </aside>
     </main>
+    <footer class="bottom"><span>PORTO CINZA — SETOR ISOLADO <b>◆</b> <span id="coordinates">X: 0000 Y: 0000</span></span><span><span id="save-status">SALVO LOCALMENTE</span> <b>•</b> BUILD 4.0.0</span></footer>
   </div>
-
-  <div class="overlay" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-card"><button class="close-btn" id="close-modal" aria-label="Fechar">×</button><span class="tag">MANUAL DE SOBREVIVÊNCIA</span><h2 id="modal-title">COMO JOGAR</h2><p>Você controla <strong>Clara</strong>, socorrista presa em Porto Cinza durante um surto zumbi. Avance escolhendo uma ação em cada cena. Não existe caminho totalmente seguro.</p><ul><li><strong>Saúde e infecção:</strong> se a saúde chegar a zero ou a infecção atingir 100, a campanha acaba. Você pode usar kits médicos na barra lateral.</li><li><strong>Recursos:</strong> alimentos, kits médicos, ferramentas e munição podem abrir caminhos diferentes.</li><li><strong>Confiança:</strong> ajudar outras pessoas altera as opções disponíveis e o desfecho.</li><li><strong>Barulho:</strong> ações ruidosas podem atrair infectados quando a ameaça estiver muito alta.</li><li><strong>Consequências:</strong> pistas, pessoas resgatadas e o estado da energia afetam a missão final.</li><li><strong>Salvamento:</strong> cada ação é salva neste navegador. Não há conta, nuvem ou multiplayer nesta versão.</li></ul><button class="primary" id="got-it">ENTENDIDO →</button></div></div>
-  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Menu do jogo"></div></div>
+  <div id="toast-container" aria-live="polite"></div>
+  <script src="game.js" defer></script>
 </body>
 </html>

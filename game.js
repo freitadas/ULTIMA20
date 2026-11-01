@@ -1,276 +1,184 @@
+/* ÚLTIMA TRANSMISSÃO 4.0.0 — motor original de sobrevivência, sem dependências externas */
 'use strict';
-
-/* ÚLTIMA TRANSMISSÃO V1.0 — motor narrativo sem dependências externas. */
 (() => {
-  const SAVE_KEY = 'ultima-transmissao-v1-campanha';
-  const ENDINGS_KEY = 'ultima-transmissao-v1-finais';
-  const VERSION = 1;
-  const missions = [
-    ['01 · A RUPTURA', 'Deixe o apartamento, entenda o que aconteceu e encontre uma rota para fora do bairro.'],
-    ['02 · AVENIDA DOS ECOS', 'Atravesse a avenida e decida o que vale a pena carregar — ou quem vale a pena salvar.'],
-    ['03 · REMÉDIOS PARA O AMANHÃ', 'Explore a farmácia isolada e busque suprimentos para os sobreviventes.'],
-    ['04 · O ABRIGO', 'Encontre a médica Sofia e decida quanto da sua reserva deve ser compartilhado.'],
-    ['05 · A ÚLTIMA CENTELHA', 'Tente recuperar a energia da subestação para melhorar as chances da transmissão.'],
-    ['06 · FREQUÊNCIA MORTA', 'Alcance a torre de comunicação e faça contato com alguém fora da cidade.'],
-    ['07 · A ESCOLHA FINAL', 'Decida o destino das pessoas que ainda dependem de você.']
-  ];
-  const zones = ['moradia', 'avenida', 'farmacia', 'abrigo', 'subestacao', 'torre'];
-  const names = {health:'saúde', infection:'infecção', noise:'ameaça', food:'alimentos', meds:'kit médico', parts:'ferramentas', ammo:'munição', trust:'confiança'};
-  const scenes = {
-    inicio: {
-      act:0, zone:'moradia', location:'APARTAMENTO 208 / PORTO CINZA', region:'SETOR 01 · ZONA RESIDENCIAL', title:'A cidade parou de respirar',
-      text:['03h40. O alarme de emergência toca há onze minutos. Da sua janela, você vê carros abandonados e fumaça subindo atrás do hospital. Pessoas correm. Algumas já não parecem pessoas.', 'Você é Clara, socorrista do serviço de urgência. Seu rádio portátil chia na mesa; uma mochila está aberta perto da porta. Há pouco tempo antes que os corredores sejam tomados.'],
-      dialogue:['VOZ NO RÁDIO','“...quem conseguir ouvir... o abrigo municipal... precisamos da torre...”'],
-      choices:[
-        {label:'Vasculhar o armário médico', desc:'Leve o que pode salvar uma vida.', info:'+1 kit · +12 min', to:'armario', delta:{meds:1,noise:3}, minutes:12, log:'Recolheu material de primeiros socorros.'},
-        {label:'Procurar a frequência da Defesa Civil', desc:'O ruído pode esconder uma pista.', info:'Frequência encontrada · +8 min', to:'radio', set:['frequency'], minutes:8, log:'Registrou a frequência de emergência 101.7 MHz.'},
-        {label:'Sair imediatamente', desc:'Menos tempo perdido. Menos equipamentos.', info:'+4 min', to:'avenida', minutes:4, log:'Saiu do apartamento sem explorar os arredores.'}
-      ]
-    },
-    armario:{act:0,zone:'moradia',location:'APARTAMENTO 208 / PORTO CINZA',region:'SETOR 01 · ZONA RESIDENCIAL',title:'O peso de um kit',text:['Dentro do armário há gaze, antisséptico e um frasco lacrado. Você empurra tudo para dentro da mochila.', 'Uma pancada faz a porta do apartamento tremer. Não há mais tempo para organizar nada.'],choices:[{label:'Sair pela escada de emergência',desc:'A rua é sua única saída.',info:'+8 min',to:'avenida',minutes:8,log:'Deixou o prédio pela escada de emergência.'}]},
-    radio:{act:0,zone:'moradia',location:'APARTAMENTO 208 / PORTO CINZA',region:'SETOR 01 · ZONA RESIDENCIAL',title:'A voz entre os ruídos',text:['Depois de girar o seletor, você encontra uma sequência repetida em 101.7 MHz: “CORREDOR NORTE, ZERO-SETE”. O sinal se apaga.', 'Você anota a frequência no braço. Se chegar à torre, essa informação pode fazer a diferença.'],choices:[{label:'Sair com o rádio ligado',desc:'Guarde a frequência e avance.',info:'+7 min',to:'avenida',minutes:7,log:'Seguiu com o código de comunicação anotado.'}]},
-    avenida:{act:1,zone:'avenida',location:'AVENIDA CENTRAL / QUARTEIRÃO 7',region:'SETOR 02 · AVENIDA DOS ECOS',title:'O choro atrás do ônibus',text:['Um ônibus bloqueia a pista. Na calçada, uma adolescente chama por sua mãe, enquanto dois infectados se aproximam. Do outro lado da avenida, a porta de um pequeno mercado ainda está aberta.', 'Seu destino é a farmácia municipal, mas cada desvio pode alterar o que acontecerá depois.'],dialogue:['ADOLESCENTE','“Por favor! Não me deixa aqui!”'],choices:[
-      {label:'Salvar a adolescente',desc:'Arrisque sua segurança por Nina.',info:'+2 confiança · −10 saúde',to:'nina',delta:{trust:2,health:-10,noise:8},set:['nina'],minutes:14,log:'Resgatou Nina do ônibus.'},
-      {label:'Entrar no mercado abandonado',desc:'Comida e ferramentas podem estar lá.',info:'+18 min',to:'mercado',minutes:18,log:'Entrou no mercado em busca de mantimentos.'},
-      {label:'Usar a passagem entre os prédios',desc:'Um caminho rápido, porém perigoso.',info:'−7 saúde · +10 min',to:'atalho',delta:{health:-7,noise:6},minutes:10,log:'Ignorou o chamado e seguiu pela passagem estreita.'}
-    ]},
-    nina:{act:1,zone:'avenida',location:'AVENIDA CENTRAL / ÔNIBUS 302',region:'SETOR 02 · AVENIDA DOS ECOS',title:'Uma promessa difícil',text:['Você puxa a garota para trás de um carro no instante em que uma mão apodrecida atravessa a janela do ônibus. Nina está assustada, mas consegue caminhar.', 'Ela diz que a mãe foi levada ao abrigo municipal. Você não sabe se é verdade. Mesmo assim, ela passa a seguir seus passos.'],dialogue:['NINA','“Se você encontrar minha mãe... promete que vai dizer que eu tentei?”'],choices:[
-      {label:'Fazer um curativo em Nina',desc:'Use seu kit de emergência para ajudá-la.',need:{meds:1},info:'−1 kit · +1 confiança',to:'farmacia',delta:{meds:-1,trust:1},minutes:12,log:'Cuidou dos ferimentos de Nina.'},
-      {label:'Seguir com Nina até a farmácia',desc:'É melhor não permanecer na avenida.',info:'+9 min',to:'farmacia',minutes:9,log:'Seguiu com Nina para buscar remédios.'}
-    ]},
-    mercado:{act:1,zone:'avenida',location:'MERCADO BOM DIA / QUARTEIRÃO 7',region:'SETOR 02 · AVENIDA DOS ECOS',title:'Corredores vazios',text:['Prateleiras foram derrubadas no chão. Um rádio toca uma propaganda antiga. Você escuta passos vindos do estoque e percebe duas oportunidades de coleta.', 'Ficar ali por muito tempo será perigoso.'],choices:[
-      {label:'Recolher alimentos',desc:'Priorize uma reserva para atravessar a cidade.',info:'+2 alimentos · +12 ameaça',to:'farmacia',delta:{food:2,noise:12},minutes:15,log:'Recolheu duas porções de alimento no mercado.'},
-      {label:'Procurar caixa de ferramentas',desc:'Essencial para reparos mecânicos.',info:'+1 ferramentas · −5 saúde',to:'farmacia',delta:{parts:1,health:-5,noise:6},minutes:17,log:'Encontrou ferramentas, mas foi arranhada durante a fuga.'}
-    ]},
-    atalho:{act:1,zone:'avenida',location:'TRAVESSA DO VIADUTO / ACESSO LESTE',region:'SETOR 02 · AVENIDA DOS ECOS',title:'Por baixo da cidade',text:['O cheiro de combustível invade a passagem estreita. Um portão impede a saída, mas está enferrujado. Você força a estrutura e abre uma brecha suficiente para passar.', 'Uma caixa de manutenção caiu no chão. Há um conjunto de ferramentas ao lado dela.'],choices:[{label:'Recolher as ferramentas e avançar',desc:'Você poderá tentar reparar a energia.',info:'+1 ferramentas · +8 min',to:'farmacia',delta:{parts:1},minutes:8,log:'Encontrou ferramentas na travessa.'}]},
-    farmacia:{act:2,zone:'farmacia',location:'FARMÁCIA MUNICIPAL / SETOR LESTE',region:'SETOR 03 · POSTO MÉDICO',title:'O estoque lacrado',text:['A porta de vidro da farmácia está rachada. Um grupo de saqueadores discute dentro da loja. Pelos fundos, um corredor escuro leva ao depósito de medicamentos.', 'O abrigo municipal fica a alguns quarteirões. Ali, pessoas feridas podem precisar mais desses remédios do que você.'],choices:[
-      {label:'Entrar pela janela lateral',desc:'Rápido, mas os estilhaços podem ferir você.',info:'+2 kits · −9 saúde · +14 ameaça',to:'saida_farmacia',delta:{meds:2,health:-9,noise:14},minutes:16,log:'Entrou pela janela e encontrou dois kits médicos.'},
-      {label:'Trocar comida com os saqueadores',desc:'Evite o confronto com uma negociação.',need:{food:1},info:'−1 alimento · +2 kits',to:'saida_farmacia',delta:{food:-1,meds:2,trust:1},minutes:24,log:'Trocou alimentos por kits médicos sem confronto.'},
-      {label:'Procurar o depósito dos fundos',desc:'Mais lento e arriscado, mas discreto.',info:'+1 kit · +1 ferramenta · +10 infecção',to:'saida_farmacia',delta:{meds:1,parts:1,infection:10,noise:3},minutes:28,log:'Saiu do depósito com remédios e ferramentas, após contato com material contaminado.'},
-      {label:'Não entrar e ir direto ao abrigo',desc:'Ganhe tempo, mas chegue com poucos recursos.',info:'+8 min',to:'abrigo',minutes:8,log:'Ignorou o estoque da farmácia.'}
-    ]},
-    saida_farmacia:{act:2,zone:'farmacia',location:'FARMÁCIA MUNICIPAL / SAÍDA',region:'SETOR 03 · POSTO MÉDICO',title:'O som dos passos',text:['Você fecha a mochila, verifica o corredor e encontra uma saída nos fundos. O rádio repete uma instrução curta: “Se alguém ainda estiver vivo, sigam para o ginásio”.', 'Agora a decisão não é mais sobre encontrar recursos. É sobre o que fazer com eles.'],choices:[{label:'Seguir para o ginásio municipal',desc:'Procure os outros sobreviventes.',info:'+16 min',to:'abrigo',minutes:16,log:'Chegou ao ginásio que serve de abrigo.'}]},
-    abrigo:{act:3,zone:'abrigo',location:'GINÁSIO MUNICIPAL / ABRIGO 04',region:'SETOR 04 · ÁREA SEGURA',title:'O que significa sobreviver?',text:['Há dezoito sobreviventes dentro do ginásio, entre eles crianças e pessoas com ferimentos graves. Sofia, médica responsável pelo local, tenta manter a situação sob controle.', 'O abrigo está quase sem água e a energia falha. Uma unidade de rádio na torre norte é a última chance de pedir uma evacuação. Sofia observa sua mochila.'],dialogue:['DRA. SOFIA','“Se tiver remédios, precisamos deles. Mas não posso obrigar você a entregar nada.”'],choices:[
-      {label:'Entregar um kit de medicamentos',desc:'Ajude os feridos e ganhe apoio.',need:{meds:1},info:'−1 kit · +2 confiança',to:'plano_abrigo',delta:{meds:-1,trust:2},set:['helped'],minutes:18,log:'Doou medicamentos aos sobreviventes.'},
-      {label:'Compartilhar parte da comida',desc:'Divida seus mantimentos.',need:{food:1},info:'−1 alimento · +1 confiança',to:'plano_abrigo',delta:{food:-1,trust:1},set:['helped'],minutes:16,log:'Compartilhou comida com o abrigo.'},
-      {label:'Guardar tudo para sua sobrevivência',desc:'Você não sabe quanto tempo vai durar.',info:'−1 confiança',to:'plano_abrigo',delta:{trust:-1},minutes:5,log:'Decidiu não compartilhar os recursos.'}
-    ]},
-    plano_abrigo:{act:3,zone:'abrigo',location:'GINÁSIO MUNICIPAL / SALA DE CONTROLE',region:'SETOR 04 · ÁREA SEGURA',title:'Sofia tem um plano',text:['Sofia mostra um mapa. A torre norte ainda pode transmitir para equipes fora de Porto Cinza, mas o sinal depende de uma subestação que está instável.', 'Antes de partir, você pode ajudar a organizar a saída do abrigo. Cada minuto é precioso.'],dialogue:['DRA. SOFIA','“Só preciso saber uma coisa: quando o rádio funcionar, você vai lembrar que estamos aqui?”'],choices:[
-      {label:'Reforçar as barricadas do ginásio',desc:'Use ferramentas para dar mais tempo ao grupo.',need:{parts:1},info:'−1 ferramenta · +2 confiança',to:'subestacao',delta:{parts:-1,trust:2},set:['fortified'],minutes:23,log:'Reforçou a entrada do ginásio.'},
-      {label:'Atender os feridos antes de partir',desc:'Use recursos e trabalhe junto a Sofia.',need:{meds:1},info:'−1 kit · +2 confiança',to:'subestacao',delta:{meds:-1,trust:2},set:['treated'],minutes:18,log:'Ajudou Sofia a atender os feridos.'},
-      {label:'Prometer que buscará ajuda e partir',desc:'Não há tempo para outras tarefas.',info:'+9 min',to:'subestacao',minutes:9,log:'Partiu rumo à subestação sem reforçar o abrigo.'}
-    ]},
-    subestacao:{act:4,zone:'subestacao',location:'SUBESTAÇÃO NORTE / ACESSO TÉCNICO',region:'SETOR 05 · REDE ELÉTRICA',title:'Uma faísca para a cidade',text:['A subestação é iluminada apenas por luzes vermelhas de emergência. Um painel de manutenção está aberto e o disjuntor principal caiu.', 'Há uma maneira segura de restaurar a energia com ferramentas. Também existe um jeito improvisado, bem mais perigoso. Você pode seguir até a torre sem consertá-la, mas a transmissão ficará instável.'],choices:[
-      {label:'Consertar o painel com ferramentas',desc:'Restaure o sinal elétrico com segurança.',need:{parts:1},info:'−1 ferramenta · energia restaurada',to:'energia',delta:{parts:-1,noise:7},set:['power'],minutes:25,log:'Restaurou a alimentação elétrica da torre.'},
-      {label:'Forçar o disjuntor manualmente',desc:'Há risco de choque e ferimentos.',info:'−18 saúde · energia restaurada',to:'energia',delta:{health:-18,noise:15},set:['power'],minutes:18,log:'Forçou o disjuntor, sofreu um choque e restaurou a energia.'},
-      {label:'Deixar a subestação desligada',desc:'Siga à torre com o sistema em modo de emergência.',info:'+10 min',to:'torre',minutes:10,log:'Deixou a subestação sem energia.'}
-    ]},
-    energia:{act:4,zone:'subestacao',location:'SUBESTAÇÃO NORTE / SALA DE PAINÉIS',region:'SETOR 05 · REDE ELÉTRICA',title:'As luzes voltam',text:['Por alguns segundos, o bairro inteiro parece respirar de novo. Na encosta, uma antena acende em verde. A torre norte voltou a ter energia.', 'O barulho do gerador atrai movimento além da cerca. Você precisa sair antes que a passagem seja bloqueada.'],choices:[{label:'Correr em direção à torre',desc:'O rádio está a poucos quarteirões.',info:'+14 min',to:'torre',minutes:14,log:'Partiu para a torre com energia restabelecida.'}]},
-    torre:{act:5,zone:'torre',location:'TORRE NORTE / COMPLEXO DE TRANSMISSÃO',region:'SETOR 06 · ANTENA 101.7',title:'O último sinal da cidade',text:['Uma horda atravessa o estacionamento da torre. O prédio de transmissão está logo à frente, mas a porta principal foi arrombada.', 'Você tem três maneiras de alcançar a sala de rádio. Seu equipamento, o tempo e o barulho vão determinar o custo.'],choices:[
-      {label:'Cruzar os corredores escuros',desc:'Mantenha o silêncio e aceite o risco.',info:'−11 saúde · +9 ameaça',to:'central',delta:{health:-11,noise:9},minutes:21,log:'Atravessou os corredores da torre em silêncio.'},
-      {label:'Disparar para abrir passagem',desc:'Munição pode salvar tempo, mas também atrai a horda.',need:{ammo:1},info:'−1 munição · +32 ameaça',to:'central',delta:{ammo:-1,noise:32,health:-3},minutes:10,log:'Abriu caminho com um disparo, atraindo infectados.'},
-      {label:'Subir pela escada externa',desc:'Mais lento, mas longe do acesso principal.',info:'−7 saúde · +6 infecção',to:'central',delta:{health:-7,infection:6,noise:2},minutes:26,log:'Escalou a escada externa e entrou na sala técnica.'},
-      {label:'Avançar pelo pátio tomado pela horda',desc:'O caminho mais curto. O risco pode ser fatal.',info:'−30 saúde · +22 ameaça · +10 infecção',to:'central',delta:{health:-30,noise:22,infection:10},minutes:7,log:'Tentou atravessar o pátio tomado por infectados.'}
-    ]},
-    central:{act:5,zone:'torre',location:'TORRE NORTE / SALA DE RÁDIO',region:'SETOR 06 · ANTENA 101.7',title:'Alguém está ouvindo?',text:['A sala técnica ainda tem energia de emergência. A frequência está cheia de vozes interrompidas. Um operador do lado de fora da cidade talvez esteja monitorando os canais de resgate.', 'Você encontra o microfone, segura o fone em uma das orelhas e prepara o último pedido de ajuda. Existe a alternativa de sair sem se revelar.'],dialogue:['VOZ DISTANTE','“...aqui é posto Horizonte... identifiquem sua posição...”'],choices:[
-      {label:'Usar o código de emergência anotado',desc:'Uma frequência estável e identificada.',needFlags:['frequency'],info:'sinal estabelecido · +14 min',to:'chamado',set:['signal','strongSignal'],minutes:14,log:'Transmitiu com o código oficial da Defesa Civil.'},
-      {label:'Transmitir com a energia restaurada',desc:'Envie coordenadas pela rede auxiliar.',needFlags:['power'],info:'sinal estabelecido · +15 min',to:'chamado',set:['signal'],minutes:15,log:'Estabeleceu contato por meio da antena alimentada.'},
-      {label:'Improvisar uma transmissão de socorro',desc:'Funciona mesmo sem reparos prévios, mas há interferências.',info:'−10 saúde · +17 ameaça',to:'chamado',delta:{health:-10,noise:17},set:['signal','weakSignal'],minutes:30,log:'Transmitiu um SOS por um canal instável.'},
-      {label:'Desligar o rádio e desaparecer',desc:'Você evita denunciar sua posição, mas ninguém virá.',info:'sem pedido de socorro',to:'silencio',minutes:4,log:'Desligou o transmissor sem pedir resgate.'}
-    ]},
-    chamado:{act:6,zone:'torre',location:'TORRE NORTE / FREQUÊNCIA DE RESGATE',region:'SETOR 06 · CENTRO DE TRANSMISSÃO',title:'Uma resposta na escuridão',text:['Uma voz finalmente atravessa a interferência. Um helicóptero de reconhecimento está a caminho da praça central, mas só poderá permanecer por poucos minutos.', 'Sofia chama pelo comunicador: o abrigo ainda está ocupado. Nina segura a sua manga e pergunta se haverá lugar para todos.'],dialogue:['POSTO HORIZONTE','“Podemos recolher um pequeno grupo primeiro. Decida agora quem deve ser priorizado.”'],choices:[
-      {label:'Guiar o grupo do abrigo até a evacuação',desc:'Retorne e organize a saída dos sobreviventes.',info:'desfecho coletivo',finish:'group',minutes:25,log:'Optou por voltar para organizar a evacuação coletiva.'},
-      {label:'Proteger Nina durante a fuga',desc:'Garanta que a adolescente chegue ao ponto de resgate.',needFlags:['nina'],info:'desfecho de Nina',finish:'nina',minutes:23,log:'Escolheu acompanhar Nina até a evacuação.'},
-      {label:'Fugir sozinha pela rota mais rápida',desc:'Não dependa de ninguém.',info:'desfecho individual',finish:'solo',minutes:10,log:'Optou por deixar a cidade sozinha.'}
-    ]},
-    silencio:{act:6,zone:'torre',location:'TORRE NORTE / SISTEMA DESLIGADO',region:'SETOR 06 · CENTRO DE TRANSMISSÃO',title:'O peso do silêncio',text:['Você desliga o transmissor. Lá fora, a cidade continua mergulhada na fumaça. Nenhum veículo sabe que vocês estão aqui.', 'A decisão agora é permanecer próximo às pessoas que conheceu ou tentar encontrar outra saída pelos próprios meios.'],choices:[
-      {label:'Voltar ao abrigo e enfrentar a noite juntos',desc:'Talvez o grupo ainda consiga sobreviver.',info:'desfecho coletivo sem resgate',finish:'group',minutes:35,log:'Voltou ao abrigo sem sinal de evacuação.'},
-      {label:'Guiar Nina por uma saída secundária',desc:'Uma travessia sem ajuda externa.',needFlags:['nina'],info:'desfecho de Nina sem resgate',finish:'nina',minutes:30,log:'Tentou sair da cidade com Nina sem resgate.'},
-      {label:'Deixar Porto Cinza sozinha',desc:'Siga por um túnel de manutenção.',info:'desfecho individual',finish:'solo',minutes:21,log:'Deixou a torre e fugiu sozinha.'}
-    ]}
-  };
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const distance = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
+const W=2800,H=1880,SAVE_KEY='ut-v4-campaign',SETTINGS_KEY='ut-v4-settings';
+const base=()=>({version:4,x:330,y:410,health:100,hunger:90,thirst:95,infection:0,food:3,water:3,medkit:2,ammo:12,level:1,xp:0,time:400,quest:0,trust:{nina:50,sofia:50,raul:50},flags:{},decisions:[],achievements:[],loot:[],kills:0,steps:0,logs:['Você acordou em Porto Cinza. Encontre a equipe de resgate.'],ended:false,ending:'',seed:1731});
+const MISSIONS=[
+ {chapter:1,title:'Sinais no hospital',region:'Hospital Municipal',x:450,y:350,hint:'Localize a médica Sofia no estacionamento.',story:'O pronto-socorro perdeu energia. Sofia tenta retirar os últimos pacientes enquanto gritos ecoam pelo corredor. Ela precisa decidir o destino dos medicamentos.',options:[
+ {id:'hospital_help',title:'Ajudar Sofia com os pacientes',detail:'Ganha confiança. Usa 1 kit médico.',requires:{medkit:1},effects:{medkit:-1,xp:35,trust:{sofia:25},flag:'helpedHospital'}},
+ {id:'hospital_supply',title:'Levar os suprimentos restantes',detail:'Obtém 2 kits e 1 alimento; Sofia desaprova.',effects:{medkit:2,food:1,trust:{sofia:-20},xp:15,flag:'tookSupplies'}},
+ {id:'hospital_route',title:'Buscar uma rota de fuga',detail:'Salva tempo, mas deixa os pacientes.',effects:{thirst:-8,xp:20,trust:{sofia:-5},flag:'foundRoute'}}]},
+ {chapter:1,title:'Uma voz na farmácia',region:'Bairro Velho',x:860,y:610,hint:'Siga o sinal amarelo até a farmácia.',story:'Um pedido de socorro vem do telhado. Nina está presa, enquanto uma horda se aproxima. A farmácia está repleta de suprimentos, mas a saída ficará comprometida.',options:[
+ {id:'nina_rescue',title:'Resgatar Nina pelos fundos',detail:'Salva Nina, recebe apoio e aumenta a ameaça.',effects:{health:-12,ammo:-2,trust:{nina:35},flag:'ninaSafe',xp:45}},
+ {id:'nina_sneak',title:'Atrair os zumbis para longe',detail:'Resgata Nina com risco de infecção.',effects:{infection:9,trust:{nina:20},flag:'ninaSafe',xp:32}},
+ {id:'nina_leave',title:'Não arriscar; pegar os suprimentos',detail:'Obtém comida e munição. Nina não acompanha o grupo.',effects:{food:2,ammo:7,trust:{nina:-45},flag:'ninaLeft',xp:10}}]},
+ {chapter:1,title:'O acordo da oficina',region:'Zona Industrial',x:1200,y:875,hint:'Encontre Raul na oficina perto da avenida.',story:'Raul conserta um gerador improvisado. Ele tem ferramentas, mas exige combustível e uma promessa de abrigo antes de ajudar.',options:[
+ {id:'raul_trade',title:'Negociar honestamente',detail:'Entrega 1 alimento e ganha a confiança de Raul.',requires:{food:1},effects:{food:-1,trust:{raul:30},flag:'raulAlly',xp:36}},
+ {id:'raul_force',title:'Pegar o gerador à força',detail:'Ganha munição, porém perde um aliado importante.',effects:{ammo:8,health:-15,trust:{raul:-40},flag:'raulEnemy',xp:24}},
+ {id:'raul_help',title:'Reparar a oficina juntos',detail:'Gasta tempo e água, cria uma aliança.',requires:{water:1},effects:{water:-1,trust:{raul:22},flag:'raulAlly',xp:40}}]},
+ {chapter:1,title:'A última noite no abrigo',region:'Abrigo Esperança',x:660,y:1305,hint:'Alcance o abrigo e converse com Sofia.',story:'O abrigo está lotado. Sofia pede comida para os feridos. Nina observa se você realmente se preocupa com os outros. Um ataque se aproxima.',options:[
+ {id:'shelter_share',title:'Dividir duas porções com o abrigo',detail:'Fortalece a comunidade e os vínculos.',requires:{food:2},effects:{food:-2,trust:{sofia:20,nina:10},flag:'shelterFed',xp:50}},
+ {id:'shelter_guard',title:'Montar barricadas e vigiar',detail:'Usa munição para aumentar a proteção.',requires:{ammo:3},effects:{ammo:-3,trust:{sofia:10,raul:10},flag:'shelterDefended',xp:38}},
+ {id:'shelter_ignore',title:'Guardar os recursos para si',detail:'Preserva a mochila, mas o abrigo enfraquece.',effects:{trust:{sofia:-22,nina:-12},flag:'shelterAbandoned',xp:12}}]},
+ {chapter:1,title:'A frequência perdida',region:'Subestação Norte',x:1320,y:355,hint:'Restaure o transmissor da subestação.',story:'A rede elétrica de Porto Cinza está prestes a apagar. É possível ativar o transmissor, mas a sobrecarga pode atrair toda a região.',options:[
+ {id:'signal_stable',title:'Restaurar energia com segurança',detail:'Requer um aliado na oficina ou a ajuda do abrigo.',requiresFlagAny:['raulAlly','shelterDefended'],effects:{health:-8,xp:65,flag:'stableSignal'}},
+ {id:'signal_loud',title:'Forçar o transmissor',detail:'A cidade ouve a mensagem, mas a explosão atrai zumbis.',effects:{infection:12,health:-18,xp:55,flag:'loudSignal'}},
+ {id:'signal_skip',title:'Abandonar o transmissor e fugir',detail:'Chega ao leste sem transmitir nenhuma mensagem.',effects:{trust:{sofia:-10},flag:'silentSignal',xp:20}}]},
+ {chapter:2,title:'O bloqueio da fronteira',region:'Posto de Controle',x:1710,y:355,hint:'Explore o leste liberado após o transmissor.',story:'O segundo dia começa. Militares abandonaram o posto, mas deixaram um registro de evacuação. Há sinais de sobreviventes nas proximidades.',options:[
+ {id:'checkpoint_search',title:'Investigar os arquivos do posto',detail:'Descobre um código para acessar o laboratório.',effects:{ammo:6,xp:48,flag:'labCode'}},
+ {id:'checkpoint_help',title:'Socorrer os feridos na estrada',detail:'Consome kit e melhora a confiança de Sofia.',requires:{medkit:1},effects:{medkit:-1,trust:{sofia:18},flag:'roadRescue',xp:50}},
+ {id:'checkpoint_raid',title:'Recolher tudo e seguir',detail:'Mais comida e água, menos tempo de preparação.',effects:{food:2,water:2,xp:30,flag:'quickEscape'}}]},
+ {chapter:2,title:'Ecos dentro da escola',region:'Escola República',x:1910,y:860,hint:'Investigue os sinais na escola abandonada.',story:'Um rádio escolar ainda funciona. Uma transmissão curta indica crianças escondidas e uma passagem segura pelo subterrâneo.',options:[
+ {id:'school_save',title:'Evacuar as crianças pelo pátio',detail:'Gasta suprimentos, fortalece a esperança da comunidade.',requires:{food:1},effects:{food:-1,health:-8,trust:{nina:25,sofia:15},flag:'childrenSaved',xp:65}},
+ {id:'school_map',title:'Copiar o mapa subterrâneo',detail:'Encontra rota segura e kits de emergência.',effects:{medkit:1,xp:43,flag:'undergroundMap'}},
+ {id:'school_burn',title:'Bloquear as entradas e seguir',detail:'Reduz riscos imediatos, mas deixa pedidos sem resposta.',effects:{trust:{nina:-18,sofia:-8},xp:23,flag:'schoolAbandoned'}}]},
+ {chapter:2,title:'A torre de transmissão',region:'Colina do Rádio',x:2450,y:420,hint:'Suba a colina e encontre a antena.',story:'Uma voz responde ao sinal antigo. O helicóptero tem espaço limitado. O operador pede provas de que ainda há uma comunidade organizada.',options:[
+ {id:'tower_people',title:'Transmitir a localização dos sobreviventes',detail:'O grupo terá prioridade caso o resgate chegue.',effects:{trust:{sofia:10,nina:10},flag:'calledEvac',xp:55}},
+ {id:'tower_truth',title:'Divulgar os dados da infecção',detail:'O mundo pode saber o que realmente ocorreu.',effects:{infection:8,flag:'broadcastTruth',xp:55}},
+ {id:'tower_self',title:'Solicitar extração apenas para você',detail:'Maior chance individual, risco para os aliados.',effects:{trust:{sofia:-30,nina:-30,raul:-20},flag:'selfEvac',xp:26}}]},
+ {chapter:2,title:'A verdade no laboratório',region:'Instituto Helix',x:2415,y:1255,hint:'Busque no Instituto Helix a origem do surto.',story:'No laboratório, registros indicam um tratamento experimental e uma lista de responsáveis. A última dose pode ajudar alguém, mas não todos.',options:[
+ {id:'lab_cure',title:'Usar o tratamento nos infectados',detail:'Requer o código ou o mapa subterrâneo.',requiresFlagAny:['labCode','undergroundMap'],effects:{infection:-40,trust:{sofia:18},flag:'treatmentShared',xp:65}},
+ {id:'lab_evidence',title:'Guardar provas do experimento',detail:'Ganha informações essenciais para o desfecho.',effects:{infection:7,flag:'evidenceSaved',xp:54}},
+ {id:'lab_destroy',title:'Destruir as pesquisas perigosas',detail:'Reduz a ameaça, mas nenhuma cura será descoberta.',effects:{health:-14,flag:'labDestroyed',xp:40}}]},
+ {chapter:2,title:'A última transmissão',region:'Píer do Horizonte',x:2500,y:1590,hint:'Alcance o píer e decida o futuro do grupo.',story:'O barco de resgate chega sob o céu vermelho. Você vê o abrigo ao longe e escuta o rádio falhar. Chegou a hora de decidir quem vai partir.',options:[
+ {id:'end_together',title:'Evacuar a comunidade junta',detail:'O resultado depende das alianças e do abrigo.',effects:{flag:'finishTogether',xp:80}},
+ {id:'end_truth',title:'Transmitir a verdade e permanecer',detail:'O destino de Porto Cinza depende das provas reunidas.',effects:{flag:'finishTruth',xp:80}},
+ {id:'end_alone',title:'Partir imediatamente e sozinho',detail:'Sobrevive, mas deixa a comunidade à própria sorte.',effects:{flag:'finishAlone',xp:35}}]}
+];
+const BADGES=[['primeiros-passos','Primeiros passos','Conclua sua primeira missão.'],['resgate','Ninguém fica para trás','Salve Nina.'],['alianca','Laços de confiança','Torne Raul seu aliado.'],['protetor','Abrigo protegido','Ajude a defender ou alimentar o abrigo.'],['explorador','Pé na estrada','Percorra 3.000 unidades.'],['cacador','Caçador','Elimine 15 infectados.'],['segundo-dia','O segundo dia','Chegue ao capítulo 2.'],['sobrevivente','Última transmissão','Conclua a história.']];
+const WORLD={buildings:[],trees:[],wrecks:[],caches:[],npc:[],zombies:[],particles:[],others:{}};
+let s=load(), keys={},overlayMode='intro',modalOpen=true,paused=true,last=0,canvas=$('game'),cx=canvas.getContext('2d',{alpha:false}),cw=0,ch=0,dpr=1,camX=0,camY=0,zombieTimer=0,spawnTicker=0,autosaveTimer=0,hudTicker=0,lastAutosave=0,now=0,muted=localStorage.getItem(SETTINGS_KEY)==='mute',audioCtx=null,session=null,coop=null,ws=null,roomHistory=[],lastPositionSend=0,soloBackup=null;
+const MAX_ZOMBIES=24;
+function load(){try{const data=JSON.parse(localStorage.getItem(SAVE_KEY));return data&&data.version===4&&Number.isFinite(data.x)&&Array.isArray(data.decisions)?{...base(),...data,trust:{...base().trust,...data.trust},flags:{...data.flags}}:base()}catch{return base()}}
+function save(){if(coop)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(s));$('save-status').textContent='SALVO LOCALMENTE';if(session&&!coop){clearTimeout(autosaveTimer);autosaveTimer=setTimeout(remoteSave,1500)}}catch{$('save-status').textContent='SALVAMENTO INDISPONÍVEL'}}
+function rng(seed){let x=seed>>>0;return()=>((x=(x*1664525+1013904223)>>>0)/4294967296)}
+const random=rng(49330);
+function initWorld(){let r=rng(973116);WORLD.buildings=[];WORLD.trees=[];WORLD.wrecks=[];WORLD.caches=[];WORLD.zombies=[];WORLD.npc=[];
+  for(let x=90;x<W-130;x+=210)for(let y=100;y<H-130;y+=190){
+    if(x>1360&&x<1560|| x>2120&&x<2240 || y>270&&y<425||y>800&&y<950||y>1260&&y<1400)continue;
+    if(MISSIONS.some(m=>Math.hypot(m.x-(x+65),m.y-(y+55))<178))continue;
+    if(r()<.83)WORLD.buildings.push({x:x+8,y:y+6,w:130+r()*42,h:102+r()*32,color:Math.floor(r()*4),label:r()<.08?'MERCADO':r()<.08?'DEPÓSITO':''});
+  }
+  for(let i=0;i<260;i++){let x=50+r()*(W-100),y=50+r()*(H-100);if(!isRoad(x,y)&&!blocked(x,y,23)&&!MISSIONS.some(m=>Math.hypot(m.x-x,m.y-y)<90))WORLD.trees.push({x,y,r:12+r()*19,shade:r()});}
+  for(let i=0;i<80;i++){let x=80+r()*(W-160),y=80+r()*(H-160);if(isRoad(x,y)&&!MISSIONS.some(m=>Math.hypot(m.x-x,m.y-y)<95))WORLD.wrecks.push({x,y,rot:r()*6.2});}
+  for(let i=0;i<55;i++){let x=50+r()*(W-100),y=50+r()*(H-100);if(!blocked(x,y,32)&&!MISSIONS.some(m=>distance(m,{x,y})<100))WORLD.caches.push({id:i,x,y,type:['food','water','medkit','ammo'][Math.floor(r()*4)],amount:1+Math.floor(r()*2)});}
+  WORLD.npc=[{x:477,y:310,name:'Dra. Sofia',color:'#c9b0a1'},{x:855,y:579,name:'Nina',color:'#dcad75'},{x:1215,y:836,name:'Raul',color:'#8fb6ae'}];
+}
+function isRoad(x,y){return [340,840,1340].some(v=>Math.abs(y-v)<62)||[320,920,1520,2180].some(v=>Math.abs(x-v)<69)}
+function blocked(x,y,r=13){if(x<25+r||x>W-25-r||y<25+r||y>H-25-r)return true;return WORLD.buildings.some(b=>x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h)}
+function moveEntity(entity,dx,dy,r=13){if(!blocked(entity.x+dx,entity.y,r))entity.x+=dx;if(!blocked(entity.x,entity.y+dy,r))entity.y+=dy}
+function log(msg){s.logs.unshift(msg);s.logs=s.logs.slice(0,35);renderLog()}
+function toast(msg,warn=false){const box=document.createElement('div');box.className='toast'+(warn?' warn':'');box.textContent=msg;$('toast-container').prepend(box);setTimeout(()=>box.remove(),2900)}
+function beep(freq=400,duration=.13,type='sine',volume=.06){if(muted)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(volume,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g).connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch{}}
+function resize(){dpr=Math.min(2,devicePixelRatio||1);let rect=canvas.getBoundingClientRect();cw=rect.width;ch=rect.height;canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);cx.setTransform(dpr,0,0,dpr,0,0)}
+function draw(){if(!cw||!ch)return;const g=cx;g.clearRect(0,0,cw,ch);camX=clamp(s.x-cw/2,0,Math.max(0,W-cw));camY=clamp(s.y-ch/2,0,Math.max(0,H-ch));g.save();g.translate(-camX,-camY);
+  g.fillStyle='#354538';g.fillRect(camX,camY,cw,ch);
+  let left=Math.max(0,Math.floor(camX/64)*64),top=Math.max(0,Math.floor(camY/64)*64);
+  for(let x=left;x<camX+cw+64;x+=64)for(let y=top;y<camY+ch+64;y+=64){let n=((x*71+y*37)^4097)&255;g.fillStyle=n<75?'#334336':n<160?'#384a3a':'#3b4c3c';g.fillRect(x,y,64,64);g.fillStyle='#4f6045';g.fillRect(x+((n*3)%48),y+((n*7)%48),3,2)}
+  g.fillStyle='#515b51';for(const y of [340,840,1340])g.fillRect(0,y-57,W,114);for(const x of [320,920,1520,2180])g.fillRect(x-64,0,128,H);
+  g.strokeStyle='#d0cbaa42';g.lineWidth=2;g.setLineDash([19,20]);for(const y of [340,840,1340]){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}for(const x of [320,920,1520,2180]){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}g.setLineDash([]);
+  for(const t of WORLD.trees)if(visible(t,50)){g.fillStyle='#1c3227';g.beginPath();g.ellipse(t.x+4,t.y+8,t.r*.9,t.r*.6,0,0,7);g.fill();g.fillStyle=t.shade>.5?'#244d37':'#2a5337';g.beginPath();g.arc(t.x,t.y,t.r,0,7);g.fill();g.fillStyle='#416447';g.beginPath();g.arc(t.x-4,t.y-5,t.r*.5,0,7);g.fill();}
+  for(const b of WORLD.buildings)if(visible(b,210)){g.fillStyle='#131b18';g.fillRect(b.x+6,b.y+8,b.w,b.h);g.fillStyle=['#48534e','#565c4b','#465752','#5e594f'][b.color];g.fillRect(b.x,b.y,b.w,b.h);g.strokeStyle='#9caa8a48';g.lineWidth=2;g.strokeRect(b.x+4,b.y+4,b.w-8,b.h-8);g.fillStyle='#2b3630';g.fillRect(b.x+12,b.y+14,b.w*.44,10);g.fillRect(b.x+b.w-40,b.y+b.h-39,25,24);g.fillStyle='#c6b68d49';g.fillRect(b.x+16,b.y+18,16,2);if(b.label){g.font='bold 11px sans-serif';g.fillStyle='#d6c9a5';g.fillText(b.label,b.x+12,b.y+b.h-14)}}
+  for(const w of WORLD.wrecks)if(visible(w,30)){g.save();g.translate(w.x,w.y);g.rotate(w.rot);g.fillStyle='#252d29';g.fillRect(-19,-12,38,24);g.fillStyle='#686f62';g.fillRect(-15,-10,30,20);g.fillStyle='#252b28';g.fillRect(-7,-10,14,20);g.restore()}
+  // Quest buildings and landmarks are intentionally walkable interaction areas.
+  for(let i=0;i<MISSIONS.length;i++){let m=MISSIONS[i];if(!visible(m,130))continue;const isNow=s.quest===i;g.fillStyle=isNow?'#d7e5a31b':'#d2dca514';g.beginPath();g.arc(m.x,m.y,70,0,7);g.fill();g.strokeStyle=isNow?'#d7e69a':'#77866c';g.lineWidth=isNow?3:1;g.beginPath();g.arc(m.x,m.y,isNow?51:31,0,7);g.stroke();g.fillStyle=isNow?'#e7eeb5':'#889a87';g.font='bold 11px sans-serif';g.textAlign='center';g.fillText(m.region.toUpperCase(),m.x,m.y-73);g.textAlign='left';g.fillStyle='#131e15';g.fillRect(m.x-14,m.y-16,28,28);g.fillStyle=isNow?'#d7e795':'#90a77b';g.fillRect(m.x-10,m.y-12,20,20);g.fillStyle='#1a2b1a';g.font='bold 14px sans-serif';g.textAlign='center';g.fillText('!',m.x,m.y+4);g.textAlign='left';}
+  for(const c of WORLD.caches)if(!s.loot.includes(c.id)&&visible(c,35)){g.fillStyle='#111f17';g.fillRect(c.x-12,c.y-9,24,18);g.fillStyle='#bdab6f';g.fillRect(c.x-10,c.y-7,20,14);g.strokeStyle='#eee1a9';g.strokeRect(c.x-10,c.y-7,20,14)}
+  for(const npc of WORLD.npc)if(visible(npc,28))drawPerson(npc.x,npc.y,npc.color,false,npc.name);
+  for(const z of WORLD.zombies)if(visible(z,32)){drawPerson(z.x,z.y,z.hp<2?'#638b6d':'#829a6d',true)}
+  for(const p of Object.values(WORLD.others))if(visible(p,50)){drawPerson(p.x,p.y,'#85ceda',false,p.name+' [COOP]')}
+  drawPerson(s.x,s.y,'#e5d1a5',false,'CLARA',true);
+  for(const p of WORLD.particles){g.globalAlpha=Math.max(0,p.life);g.fillStyle=p.color;g.fillRect(p.x-2,p.y-2,4+p.size,4+p.size);g.globalAlpha=1}
+  if(s.quest>=5){g.fillStyle='#d7e4a6';g.font='bold 20px sans-serif';g.fillText('SETOR LESTE',1510,180)}else{g.fillStyle='#c96c5a66';g.fillRect(1450,0,14,H);g.fillStyle='#ffb48e';g.font='bold 16px sans-serif';g.fillText('ACESSO BLOQUEADO — CONCLUA O CAPÍTULO 1',1485,1020)}
+  g.restore();
+  const darkness=Math.max(0,1-Math.max(0,Math.cos((s.time%1440-420)/1440*Math.PI*2)))*.65;
+  if(darkness>.08){g.fillStyle=`rgba(5,14,20,${darkness.toFixed(3)})`;g.fillRect(0,0,cw,ch);let grad=g.createRadialGradient(s.x-camX,s.y-camY,25,s.x-camX,s.y-camY,250);grad.addColorStop(0,'#f0dfb400');grad.addColorStop(1,'#f0dfb455');g.fillStyle=grad;g.beginPath();g.arc(s.x-camX,s.y-camY,250,0,7);g.fill()}
+  g.fillStyle='#cfdaac';g.font='bold 10px sans-serif';g.fillText(`INFECTADOS: ${WORLD.zombies.length}   •   SETOR ${s.quest<5?'OESTE':'LESTE'}   •   X ${Math.round(s.x)} Y ${Math.round(s.y)}`,15,ch-18);
+}
+function visible(p,r=0){return p.x+r>camX&&p.x-r<camX+cw&&p.y+r>camY&&p.y-r<camY+ch}
+function drawPerson(x,y,color,infected=false,name='',player=false){let g=cx;g.fillStyle='#0d160e80';g.beginPath();g.ellipse(x+3,y+15,14,7,0,0,7);g.fill();g.fillStyle=infected?'#343b30':color;g.beginPath();g.arc(x,y,11,0,7);g.fill();g.fillStyle=infected?'#bf4e3f':'#273c34';g.beginPath();g.arc(x,y-5,5,0,7);g.fill();g.fillStyle=player?'#dfeeb0':'#d0d8c2';g.fillRect(x-4,y+4,8,6);if(name){g.font='bold 10px sans-serif';g.fillStyle=player?'#e4f4bb':'#e2e4d5';g.textAlign='center';g.fillText(name,x,y-19);g.textAlign='left'}if(player){g.strokeStyle='#e4f0a2b8';g.lineWidth=2;g.beginPath();g.arc(x,y,17,0,7);g.stroke()}}
+function startNew(show=true){if(coop)leaveRoom();s=base();WORLD.others={};WORLD.zombies=[];save();updateHUD();if(show)showIntro();else resume()}
+function tick(dt){if(paused||s.ended)return;const vel=180*(dt/1000);let mx=0,my=0;if(keys.w||keys.arrowup)my--;if(keys.s||keys.arrowdown)my++;if(keys.a||keys.arrowleft)mx--;if(keys.d||keys.arrowright)mx++;if(mx||my){let n=Math.hypot(mx,my),dx=mx/n*vel,dy=my/n*vel;let prevX=s.x,prevY=s.y;moveEntity(s,dx,dy);if(s.quest<5&&s.x>1435){s.x=1435;if(prevX<1435&&now%1000<20)toast('O setor leste será liberado no segundo capítulo.',true)}let traveled=Math.hypot(s.x-prevX,s.y-prevY);s.steps+=traveled;s.time+=traveled*.008;s.hunger=clamp(s.hunger-traveled*.0034,0,100);s.thirst=clamp(s.thirst-traveled*.0041,0,100);}
+ if(s.hunger<=0||s.thirst<=0)s.health=clamp(s.health-dt*.0015,0,100);if(s.infection>60)s.health=clamp(s.health-dt*.0008,0,100);
+ zombieTimer+=dt;spawnTicker+=dt;
+ if(spawnTicker>1400){spawnTicker=0;spawnZombies();}
+ if(zombieTimer>42){const dd=zombieTimer/1000;zombieTimer=0;for(const z of WORLD.zombies){let d=distance(z,s);let aggro=(s.quest>4?225:175)+(s.flags.loudSignal?85:0);if(d<aggro){z.dir=Math.atan2(s.y-z.y,s.x-z.x);moveEntity(z,Math.cos(z.dir)*dd*z.speed,Math.sin(z.dir)*dd*z.speed,10)}else{if(random()<.013)z.dir=random()*6.283;moveEntity(z,Math.cos(z.dir)*dd*z.speed*.13,Math.sin(z.dir)*dd*z.speed*.13,10)}if(d<24&&now-z.lastHit>1250){z.lastHit=now;s.health=clamp(s.health-(s.quest>4?9:7),0,100);if(random()<.12)s.infection=clamp(s.infection+4,0,100);$('damage-flash').style.opacity='.7';setTimeout(()=>$('damage-flash').style.opacity='0',190);beep(90,.2,'sawtooth',.12);toast('Um infectado atingiu você!',true);}}WORLD.zombies=WORLD.zombies.filter(z=>distance(z,s)<820);}
+ for(const p of WORLD.particles){p.x+=p.vx*dt/1000;p.y+=p.vy*dt/1000;p.life-=dt/350;}WORLD.particles=WORLD.particles.filter(p=>p.life>0);
+ if(s.steps>3000)unlock('explorador');if(s.health<=0||s.infection>=100)die();hudTicker+=dt;if(hudTicker>210){hudTicker=0;updateHUD()}
+ if(now-lastAutosave>10000){lastAutosave=now;save()}if(coop&&ws&&ws.readyState===1&&now-lastPositionSend>160){lastPositionSend=now;sendWs({type:'position',x:Math.round(s.x),y:Math.round(s.y),health:Math.round(s.health)})}
+}
+function spawnZombies(){if(WORLD.zombies.length>=MAX_ZOMBIES)return;let count=2+(s.quest>4?1:0);for(let i=0;i<count;i++){let angle=random()*6.283,r=310+random()*270,x=clamp(s.x+Math.cos(angle)*r,30,W-30),y=clamp(s.y+Math.sin(angle)*r,30,H-30);if((s.quest<5&&x>1440)||blocked(x,y,15))continue;WORLD.zombies.push({x,y,hp:2+(s.quest>4?1:0),speed:30+random()*24,dir:random()*6.28,lastHit:0})}}
+function particles(x,y,color,count=7){for(let i=0;i<count;i++)WORLD.particles.push({x,y,vx:(random()-.5)*105,vy:(random()-.5)*105,life:1,size:random()*3,color})}
+function strike(shoot=false){if(paused||s.ended)return;if(shoot&&s.ammo<1){toast('Munição esgotada.',true);return}let targets=WORLD.zombies.map(z=>({z,d:distance(s,z)})).filter(t=>t.d<(shoot?295:58)).sort((a,b)=>a.d-b.d);if(shoot){s.ammo--;beep(130,.12,'sawtooth',.1);beep(55,.2,'triangle',.08)}else beep(210,.07,'triangle');if(targets.length){let z=targets[0].z;z.hp-=shoot?2:1;particles(z.x,z.y,'#9a4940',9);if(z.hp<=0){WORLD.zombies=WORLD.zombies.filter(t=>t!==z);s.kills++;s.xp+=10;toast('Infectado eliminado  +10 XP');if(s.kills>=15)unlock('cacador')}}else if(shoot)toast('Tiro disparado — nenhum alvo no alcance.');checkLevel();updateHUD();save()}
+function nearInteraction(){let m=MISSIONS[s.quest];if(m&&distance(s,m)<92)return{kind:'quest',obj:m,d:distance(s,m)};let nearest=WORLD.caches.filter(c=>!s.loot.includes(c.id)).map(obj=>({kind:'cache',obj,d:distance(s,obj)})).sort((a,b)=>a.d-b.d)[0];if(nearest&&nearest.d<52)return nearest;return null}
+function interact(){if(paused||s.ended)return;const n=nearInteraction();if(!n){toast('Aproxime-se de um ponto de interesse ou caixa de suprimentos.',true);return}if(n.kind==='quest'){showQuest();return}let c=n.obj;s[c.type]+=c.amount;s.loot.push(c.id);s.xp+=5;toast(`Encontrou ${c.amount}x ${resourceName(c.type)}!`);log(`Suprimentos encontrados: ${resourceName(c.type)} +${c.amount}.`);beep(700,.12);checkLevel();updateHUD();save()}
+const resourceName=k=>({food:'comida',water:'água',medkit:'kit médico',ammo:'munição'})[k]||k;
+function useItem(item){if(paused||s.ended||coop&&overlayMode==='vote')return;if(item==='ammo'){toast('Munição: pressione F ou o botão TIRO para atirar.');return}if(s[item]<1){toast(`Sem ${resourceName(item)} disponível.`,true);return}if(item==='food'){s.food--;s.hunger=clamp(s.hunger+42,0,100)}if(item==='water'){s.water--;s.thirst=clamp(s.thirst+49,0,100)}if(item==='medkit'){s.medkit--;s.health=clamp(s.health+38,0,100);s.infection=clamp(s.infection-12,0,100)}toast(`${resourceName(item).toUpperCase()} utilizado.`);beep(650,.13);save();updateHUD()}
+function canChoose(o){if(o.requires&&Object.entries(o.requires).some(([k,v])=>s[k]<v))return false;if(o.requiresFlagAny&&!o.requiresFlagAny.some(f=>s.flags[f]))return false;return true}
+function applyChoice(q,opt,withUi=true){const m=MISSIONS[q];if(!m||s.quest!==q)return;const o=m.options.find(o=>o.id===opt);if(!o)return;const e=o.effects||{};for(const [k,v] of Object.entries(e))if(['health','hunger','thirst','infection','food','water','medkit','ammo','xp'].includes(k))s[k]=k==='xp'?s[k]+v:clamp(s[k]+v,0,k==='health'||k==='hunger'||k==='thirst'||k==='infection'?100:999);
+ if(e.trust)for(const [k,v]of Object.entries(e.trust))s.trust[k]=clamp(s.trust[k]+v,0,100);if(e.flag)s.flags[e.flag]=true;s.decisions.push({quest:q,choice:opt});s.quest++;s.time+=35;if(withUi)log(`${m.region}: ${o.title}.`);else s.logs.unshift(`${m.region}: ${o.title}.`);if(s.quest===5){unlock('segundo-dia');if(withUi){toast('CAPÍTULO 2 DESBLOQUEADO — SETOR LESTE');beep(750,.25)}}if(s.quest===1)unlock('primeiros-passos');if(s.flags.ninaSafe)unlock('resgate');if(s.flags.raulAlly)unlock('alianca');if(s.flags.shelterDefended||s.flags.shelterFed)unlock('protetor');if(s.quest>=MISSIONS.length){finish();return}checkLevel();updateHUD();save();if(withUi){beep(570,.15);toast('Missão concluída. Novo objetivo no mapa.');resume()}}
+function checkLevel(){let newLevel=1+Math.floor(s.xp/100);if(newLevel>s.level){s.level=newLevel;toast(`NOVO NÍVEL: ${newLevel}`);s.health=clamp(s.health+15,0,100);beep(820,.22)}}
+function unlock(id){if(!s.achievements.includes(id)){s.achievements.push(id);if(!paused)toast('CONQUISTA: '+(BADGES.find(a=>a[0]===id)?.[1]||id));}}
+function die(){if(s.ended)return;s.ended=true;s.ending='A cidade reclamou mais uma vida.';save();showEnding(false)}
+function finish(){s.ended=true;unlock('sobrevivente');const f=s.flags;let ending;
+ if(f.finishAlone)ending='SOBREVIVENTE SOLITÁRIA — Clara deixa Porto Cinza. O rádio continua chamando por nomes que ninguém responde.';
+ else if(f.finishTruth&&f.evidenceSaved)ending='A VERDADE SOBREVIVE — As provas da infecção são transmitidas. Porto Cinza desaparece dos mapas, mas não da memória.';
+ else if(f.finishTruth)ending='A ÚLTIMA TESTEMUNHA — Clara permanece para enviar sua mensagem. A transmissão atravessa a madrugada.';
+ else if(f.finishTogether&&(f.shelterFed||f.shelterDefended)&&s.trust.sofia>=45)ending='AMANHECER COLETIVO — A comunidade resiste unida. Um barco leva os sobreviventes a uma nova chance.';
+ else if(f.finishTogether&&f.ninaSafe)ending='PROMESSA CUMPRIDA — Nina escapa com Clara. Nem todos puderam partir, mas a esperança sobreviveu.';
+ else ending='A NOITE NÃO ACABOU — O grupo chega ao píer dividido. A fuga acontece em silêncio, sob o último sinal.';
+ s.ending=ending;log('Temporada 1 concluída: '+ending);save();showEnding(true)}
+function updateHUD(){const next=MISSIONS[s.quest];$('quest-index').textContent=next?`MISSÃO ${String(s.quest+1).padStart(2,'0')} / ${MISSIONS.length}`:'CAMPANHA CONCLUÍDA';$('quest-title').textContent=next?.title||'Você chegou ao fim';$('quest-hint').textContent=next?.hint||s.ending;$('quest-distance').textContent=next?`${Math.round(distance(s,next))} m até o objetivo`:'TEMPORADA 1 FINALIZADA';$('region').textContent=next?.region||'PORTO CINZA';$('chapter-label').textContent=`CAP. ${s.quest>=5?2:1}`;$('rank').textContent=`NÍVEL ${String(s.level).padStart(2,'0')} · ${s.xp} XP`;
+ for(const [stat,max] of [['health',100],['hunger',100],['thirst',100],['infection',100]]){$(stat+'-value').textContent=`${Math.round(s[stat])}${stat==='health'?'/100':'%'}`;$(stat+'-bar').style.width=clamp(s[stat]/max*100,0,100)+'%'}for(const k of ['food','water','medkit','ammo'])$(k+'-value').textContent=s[k];$('clock').textContent=`DIA ${String(1+Math.floor(s.time/1440)).padStart(2,'0')} · ${String(Math.floor(s.time%1440/60)).padStart(2,'0')}:${String(Math.floor(s.time%60)).padStart(2,'0')}`;$('coordinates').textContent=`X: ${Math.round(s.x)} Y: ${Math.round(s.y)}`;$('achievement-count').textContent=`${s.achievements.length}/${BADGES.length} CONQUISTAS`;renderRelations();const n=nearInteraction();$('interaction-hint').classList.toggle('hidden',!n||paused);if(n)$('interaction-hint').textContent=n.kind==='quest'?'[ E ] INICIAR MISSÃO':'[ E ] COLETAR RECURSO';}
+function renderRelations(){$('relations').replaceChildren();for(const [k,name] of [['nina','Nina'],['sofia','Sofia'],['raul','Raul']]){let row=document.createElement('div');row.className='relation';row.innerHTML=`<span class="name">${name}</span><span class="track"><i style="width:${s.trust[k]}%"></i></span><span class="score">${s.trust[k]}</span>`;$('relations').append(row)}}
+function renderLog(){if(!$('log'))return;$('log').replaceChildren();for(const msg of s.logs.slice(0,7)){let d=document.createElement('div');d.className='log-item';d.textContent=msg;$('log').append(d)}}
+function show(html,mode='menu'){overlayMode=mode;modalOpen=true;paused=true;$('overlay').classList.remove('hidden');$('modal').innerHTML=html;$('modal').scrollTop=0;}
+function resume(){if(s.ended){showEnding(true);return}overlayMode='';modalOpen=false;paused=false;$('overlay').classList.add('hidden');canvas.focus();}
+function showIntro(){show(`<div class="eyebrow">TEMPORADA 01 / PORTO CINZA</div><h1>QUANDO O MUNDO CALOU,<br><span class="ending">VOCÊ AINDA OUVIU.</span></h1><p class="lead">Uma cidade em colapso. Duas regiões exploráveis. Dez missões. Suas decisões determinam quem sobrevive à última transmissão.</p><div class="hero-divider"></div><div class="info">MUNDO ABERTO 2D · COMBATE E EXPLORAÇÃO · ESCOLHAS RAMIFICADAS · 2 CAPÍTULOS · COOPERATIVO ONLINE OPCIONAL</div><div class="choices"><button class="primary" data-action="continue">${s.decisions.length||s.steps>0?'CONTINUAR CAMPANHA':'COMEÇAR CAMPANHA'}</button><button class="secondary" data-action="new">NOVA CAMPANHA</button><button class="secondary" data-action="help">COMO JOGAR</button></div><p class="note">O progresso solo é salvo neste navegador. Para sincronizar entre dispositivos, crie uma conta quando o backend estiver configurado.</p>`,'intro')}
+function showQuest(){const m=MISSIONS[s.quest];if(!m)return;beep(540,.2);let opts=m.options.map(o=>`<button class="choice" data-choice="${o.id}" ${!canChoose(o)?'disabled':''}><span>${escapeHtml(o.title)}${!canChoose(o)?' · INDISPONÍVEL':''}</span><small>${escapeHtml(o.detail)}</small></button>`).join('');show(`<div class="eyebrow">CAPÍTULO ${m.chapter} / MISSÃO ${String(s.quest+1).padStart(2,'0')}</div><h2>${escapeHtml(m.title)}</h2><p class="narrative-flavor">${escapeHtml(m.story)}</p><div class="info">Suas escolhas alteram relações, recursos e o desfecho. ${coop?'Em cooperação, todos os membros ativos devem votar.':'Escolha uma alternativa para concluir a missão.'}</div><div class="choices">${opts}</div><div class="row"><button class="secondary" data-action="back">VOLTAR AO MUNDO</button></div>`,'quest')}
+function handleChoice(choice){const m=MISSIONS[s.quest],o=m?.options.find(o=>o.id===choice);if(!o||!canChoose(o))return;if(coop){sendWs({type:'vote',q:s.quest,option:choice});show(`<div class="eyebrow">COOPERATIVO / VOTAÇÃO COLETIVA</div><h2>VOTO REGISTRADO</h2><p>Você votou em: <strong>${escapeHtml(o.title)}</strong>.</p><p>O resultado será aplicado quando todos os jogadores conectados votarem.</p><div class="vote-status" id="votes-info">Aguardando votos...</div><div class="row"><button class="secondary" data-action="back">ACOMPANHAR NO MAPA</button></div>`,'vote');return}applyChoice(s.quest,choice)}
+function showMenu(){show(`<div class="eyebrow">CENTRAL DE SOBREVIVÊNCIA</div><h2>MENU DE PAUSA</h2><p>Os infectados ficam parados enquanto você consulta o mapa, as relações ou o inventário.</p><div class="choices"><button class="primary" data-action="back">RETOMAR EXPLORAÇÃO</button><button class="secondary" data-action="map">MAPA DO MUNDO</button><button class="secondary" data-action="journal">DIÁRIO E CONQUISTAS</button><button class="secondary" data-action="account">CONTA E SALVAMENTO ONLINE</button><button class="secondary" data-action="room">COOPERATIVO</button><button class="secondary" data-action="help">CONTROLES</button><button class="secondary" data-action="restart-confirm">REINICIAR HISTÓRIA</button></div>`,'menu')}
+function showHelp(){show(`<div class="eyebrow">MANUAL DE CAMPO / V4.0</div><h2>COMO SOBREVIVER</h2><p><strong>W A S D</strong> ou setas: mover. <strong>E</strong>: interagir com missões e caixas. <strong>ESPAÇO</strong>: golpe corpo a corpo. <strong>F</strong>: atirar no infectado mais próximo. <strong>M</strong>: mapa. <strong>J</strong>: diário. <strong>ESC</strong>: pausa.</p><p>No celular, use os botões de direção e ação. O combate é automático contra o zumbi mais próximo dentro do alcance.</p><div class="info">Clique em COMIDA, ÁGUA ou KIT no painel lateral para consumir itens. Zumbis podem ferir e infectar. Colete caixas douradas, ganhe XP e escolha como proteger a comunidade.</div><p>O setor leste é desbloqueado após a quinta missão. As missões amarelas podem ser completadas em sequência, mas o mapa pode ser explorado livremente.</p><div class="row"><button class="primary" data-action="back">VOLTAR AO JOGO</button></div>`,'help')}
+function showJournal(){const log=s.logs.map(line=>`<p>${escapeHtml(line)}</p>`).join(''),ach=BADGES.map(([id,label,desc])=>`<span class="tag" title="${escapeHtml(desc)}">${s.achievements.includes(id)?'✓':'○'} ${escapeHtml(label)}</span>`).join('');show(`<div class="eyebrow">REGISTRO DE CAMPO / CAPÍTULO ${s.quest<5?1:2}</div><h2>DIÁRIO DA SOBREVIVENTE</h2><p>Missões: ${s.quest}/${MISSIONS.length} · Infectados eliminados: ${s.kills} · Distância percorrida: ${Math.round(s.steps)} m · Nível: ${s.level}.</p><h3>Conquistas (${s.achievements.length}/${BADGES.length})</h3><div>${ach}</div><h3>Registro de decisões</h3><div class="scroll-list">${log}</div><div class="row"><button class="primary" data-action="back">VOLTAR</button></div>`,'journal')}
+function drawMapPreview(){const map=$('world-preview');if(!map)return;const g=map.getContext('2d');map.width=560;map.height=340;g.fillStyle='#2c4230';g.fillRect(0,0,560,340);const fx=560/W,fy=340/H;g.fillStyle='#607267';for(const y of [340,840,1340])g.fillRect(0,(y-57)*fy,560,114*fy);for(const x of [320,920,1520,2180])g.fillRect((x-64)*fx,0,128*fx,340);g.fillStyle='#59675b';for(const b of WORLD.buildings)g.fillRect(b.x*fx,b.y*fy,b.w*fx,b.h*fy);if(s.quest<5){g.fillStyle='#b4504c66';g.fillRect(1440*fx,0,560-1440*fx,340)}MISSIONS.forEach((m,i)=>{g.beginPath();g.fillStyle=i===s.quest?'#e3e99a':i<s.quest?'#7eae98':'#738478';g.arc(m.x*fx,m.y*fy,i===s.quest?7:3.5,0,7);g.fill()});g.fillStyle='#e6e9f6';g.beginPath();g.arc(s.x*fx,s.y*fy,5,0,7);g.fill();}
+function showMap(){show(`<div class="eyebrow">CARTOGRAFIA / PORTO CINZA</div><h2>MAPA OPERACIONAL</h2><canvas class="map-preview" id="world-preview"></canvas><p><strong>Branco:</strong> Clara. <strong>Amarelo:</strong> missão atual. <strong>Verde:</strong> missões concluídas. <strong>Vermelho:</strong> área bloqueada até o capítulo 2.</p><div class="row"><button class="primary" data-action="back">VOLTAR À EXPLORAÇÃO</button></div>`,'map');drawMapPreview()}
+function showEnding(win){const fate=escapeHtml(s.ending);show(`<div class="eyebrow">${win?'TEMPORADA 01 CONCLUÍDA':'TRANSMISSÃO INTERROMPIDA'}</div><h1>${win?'O FIM DE<br>PORTO CINZA':'VOCÊ NÃO<br>SOBREVIVEU'}</h1><p class="lead ending">${fate}</p><div class="hero-divider"></div><p>Missões concluídas: <strong>${s.quest}/${MISSIONS.length}</strong> · Conquistas: <strong>${s.achievements.length}/${BADGES.length}</strong> · Zumbis eliminados: <strong>${s.kills}</strong></p><div class="choices"><button class="primary" data-action="new">JOGAR NOVAMENTE</button><button class="secondary" data-action="journal">REVER DIÁRIO E CONQUISTAS</button></div>`,'ending')}
+function showRestartConfirm(){show(`<div class="eyebrow">AVISO DE SEGURANÇA</div><h2>REINICIAR CAMPANHA?</h2><p>O progresso atual será substituído no dispositivo. As decisões e o inventário da campanha serão perdidos.</p><div class="row"><button class="secondary" data-action="menu">CANCELAR</button><button class="primary" data-action="confirm-new">CONFIRMAR REINÍCIO</button></div>`,'confirm')}
+const escapeHtml=text=>String(text).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+function msgError(txt){let e=$('form-error');if(e)e.textContent=txt;else toast(txt,true)}
+async function api(path,body=null,method='POST'){let response=await fetch('/api/'+path,{method:body===null?'GET':method,credentials:'same-origin',headers:body===null?{}:{'content-type':'application/json'},body:body===null?undefined:JSON.stringify(body)});let data=await response.json().catch(()=>({error:'Resposta inválida do servidor'}));if(!response.ok)throw Error(data.error||'Falha de conexão');return data}
+async function checkSession(){try{const data=await api('me');session=data.user||null;updateOnlineUI();if(session)await remoteLoad(false)}catch{session=null;updateOnlineUI()}}
+function updateOnlineUI(){$('btn-account').textContent=session?'@'+session.username:'CONTA';$('net-status').textContent=coop?'SALA '+coop.code:session?'CONTA ONLINE':'MODO SOLO'}
+function showAccount(){let content=session?`<p>Conectado como <strong>${escapeHtml(session.username)}</strong>. O progresso solo será sincronizado com o banco D1 no mesmo domínio.</p><div class="choices"><button class="primary" data-action="remote-load">CARREGAR SALVAMENTO ONLINE</button><button class="secondary" data-action="remote-save">SALVAR AGORA NA NUVEM</button><button class="secondary" data-action="logout">SAIR DA CONTA</button><button class="secondary" data-action="back">VOLTAR</button></div>`:`<p>Crie uma conta para salvar a campanha online ou entre na sua conta. É necessário ter publicado a versão com Worker + D1; no modo Pages estático, somente o salvamento local funciona.</p><div class="field"><label for="username">USUÁRIO (3–20 CARACTERES)</label><input id="username" maxlength="20" autocomplete="username" placeholder="Seu apelido"></div><div class="field"><label for="password">SENHA (MÍNIMO 10 CARACTERES)</label><input id="password" type="password" maxlength="128" autocomplete="current-password" placeholder="Sua senha"></div><p class="error" id="form-error" role="alert"></p><div class="row"><button class="primary" data-action="login">ENTRAR</button><button class="secondary" data-action="register">CRIAR CONTA</button></div><div class="row"><button class="secondary" data-action="back">VOLTAR</button></div>`;show(`<div class="eyebrow">CENTRAL DE IDENTIDADE / CLOUD SAVE</div><h2>MINHA CONTA</h2>${content}`,'account')}
+async function submitAuth(which){const username=$('username')?.value?.trim(),password=$('password')?.value;if(!username||!password)return msgError('Informe usuário e senha.');try{const data=await api(which,{username,password});session=data.user;updateOnlineUI();toast('Conta conectada: '+session.username);showAccount();await remoteLoad(true)}catch(e){msgError(e.message)}}
+async function remoteSave(){if(!session||coop)return;try{await api('save',{data:s});$('save-status').textContent='SALVO NA NUVEM'}catch{$('save-status').textContent='OFFLINE · SALVO LOCALMENTE'}}
+async function remoteLoad(onlyIfExists){if(!session||coop)return;try{const data=await api('save');if(data.save&&data.save.version===4&&(!onlyIfExists||(!s.steps&&!s.decisions.length))){s={...base(),...data.save,trust:{...base().trust,...data.save.trust},flags:{...data.save.flags}};updateHUD();save();toast('Progresso restaurado da nuvem.')}}catch(e){if(!onlyIfExists)toast('Não foi possível carregar: '+e.message,true)}}
+async function doLogout(){try{await api('logout',{})}catch{}session=null;updateOnlineUI();toast('Sessão encerrada.');showAccount()}
+function roomCode(){const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let out='';const b=new Uint8Array(6);crypto.getRandomValues(b);for(const n of b)out+=alphabet[n%alphabet.length];return out}
+function showRoom(){const online=coop?`<p>Você está conectado à sala <strong>${coop.code}</strong>. Compartilhe este código com até três amigos.</p><div class="room-players" id="room-players"></div><div class="info">Posições e decisões de história sincronizadas em tempo real. O combate com zumbis é processado localmente em cada navegador nesta versão.</div><div class="row"><button class="secondary" data-action="leave-room">SAIR DA SALA</button><button class="primary" data-action="back">VOLTAR AO MUNDO</button></div>`:`<p>Crie uma sala cooperativa ou entre pelo código recebido. Até quatro sobreviventes exploram Porto Cinza, veem suas posições e votam juntos nas decisões das missões.</p><div class="field"><label for="room-name">APELIDO</label><input id="room-name" maxlength="20" placeholder="Sobrevivente" value="${escapeHtml(session?.username||'Sobrevivente')}"></div><div class="field"><label for="room-code">CÓDIGO DA SALA (PARA ENTRAR)</label><input id="room-code" maxlength="6" placeholder="ABC123"></div><p class="error" id="form-error" role="alert"></p><div class="row"><button class="primary" data-action="create-room">CRIAR SALA</button><button class="secondary" data-action="join-room">ENTRAR NA SALA</button></div><div class="info">Requer Worker com Durable Objects. Sem backend, o jogo permanece totalmente jogável em modo solo.</div><div class="row"><button class="secondary" data-action="back">VOLTAR</button></div>`;show(`<div class="eyebrow">ÚLTIMA TRANSMISSÃO / MULTIPLAYER</div><h2>CAMPANHA COOPERATIVA</h2>${online}`,'room');if(coop)renderRoomPlayers()}
+function joinRoom(create=false){const name=($('room-name')?.value||'Sobrevivente').trim().slice(0,20);const code=create?roomCode():($('room-code')?.value||'').trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code)||name.length<2)return msgError('Informe um apelido e código de 6 caracteres válidos.');if(location.protocol==='file:')return msgError('Abra o jogo por um endereço HTTP(S) para jogar online.');if(ws)leaveRoom();soloBackup=JSON.stringify(s);try{const protocol=location.protocol==='https:'?'wss:':'ws:';ws=new WebSocket(`${protocol}//${location.host}/ws/${code}?name=${encodeURIComponent(name)}`);coop={code,name,members:[],votes:{}};ws.onopen=()=>{toast('Conectado à sala '+code);updateOnlineUI();showRoom()};ws.onmessage=ev=>{let msg;try{msg=JSON.parse(ev.data)}catch{return}processRoom(msg)};ws.onerror=()=>toast('Não foi possível conectar. Verifique o Worker e o Durable Object.',true);ws.onclose=()=>{ws=null;coop=null;WORLD.others={};restoreSolo();updateOnlineUI();toast('Desconectado da sala.',true);if(overlayMode==='room'||overlayMode==='vote')showRoom()}}catch(e){coop=null;ws=null;msgError('Falha ao conectar: '+e.message)}}
+function sendWs(data){if(ws&&ws.readyState===1)ws.send(JSON.stringify(data))}
+function renderRoomPlayers(){if(!coop||!$('room-players'))return;const box=$('room-players');box.replaceChildren();for(const name of coop.members){let x=document.createElement('span');x.textContent=name;box.append(x)}}
+function withoutSelf(positions){const out={...positions};if(coop?.myId)delete out[coop.myId];return out}
+function processRoom(msg){if(!coop)return;if(msg.type==='error'){toast(msg.error||'Erro na sala',true);return}if(msg.type==='snapshot'){coop.members=msg.members||[];coop.myId=msg.you;WORLD.others=withoutSelf(msg.positions);syncHistory(msg.history||[]);renderRoomPlayers();updateOnlineUI()}if(msg.type==='presence'){coop.members=msg.members||[];WORLD.others=withoutSelf(msg.positions);renderRoomPlayers()}if(msg.type==='positions'){WORLD.others=withoutSelf(msg.positions)}if(msg.type==='votes'){coop.votes=msg.votes||{};let info=$('votes-info');if(info)info.textContent=`Votos registrados: ${msg.count||0}/${msg.players||1} jogadores.`}if(msg.type==='resolved'){if(s.quest===msg.q){applyChoice(msg.q,msg.option);toast('Decisão coletiva: '+(MISSIONS[msg.q]?.options.find(o=>o.id===msg.option)?.title||msg.option))}else syncHistory(msg.history||[])} }
+function syncHistory(history){if(!coop)return;const historyOk=Array.isArray(history)&&history.length<=MISSIONS.length&&history.every((x,i)=>x.q===i&&MISSIONS[i]?.options.some(o=>o.id===x.option));if(!historyOk)return;if(history.length===s.quest&&s.decisions.every((d,i)=>d.choice===history[i]?.option))return;
+ s=base();WORLD.zombies=[];for(const step of history){applyChoice(step.q,step.option,false);if(s.ended)break}let objective=MISSIONS[s.quest];if(objective){s.x=objective.x-60;s.y=objective.y+90;if(blocked(s.x,s.y))s.x=objective.x+60}roomHistory=history.slice();updateHUD();save();toast('Campanha sincronizada com a sala.')}
+function restoreSolo(){if(!soloBackup)return;try{s=JSON.parse(soloBackup);soloBackup=null;updateHUD();save()}catch{soloBackup=null}}
+function leaveRoom(){if(ws){const temp=ws;ws=null;temp.onclose=null;temp.close()}coop=null;WORLD.others={};restoreSolo();updateOnlineUI()}
+// Command delegation. User-controlled strings never become HTML outside escaped values.
+$('modal').addEventListener('click',e=>{let target=e.target.closest('[data-action],[data-choice]');if(!target)return;if(target.dataset.choice){handleChoice(target.dataset.choice);return}switch(target.dataset.action){case'continue':resume();break;case'new':showRestartConfirm();break;case'confirm-new':startNew(false);break;case'back':resume();break;case'menu':showMenu();break;case'map':showMap();break;case'journal':showJournal();break;case'help':showHelp();break;case'restart-confirm':showRestartConfirm();break;case'account':showAccount();break;case'login':submitAuth('login');break;case'register':submitAuth('register');break;case'logout':doLogout();break;case'remote-load':remoteLoad(false);break;case'remote-save':remoteSave();toast('Sincronização solicitada.');break;case'room':showRoom();break;case'create-room':joinRoom(true);break;case'join-room':joinRoom(false);break;case'leave-room':leaveRoom();showRoom();break;}});
+$('btn-menu').addEventListener('click',()=>{if(innerWidth<=740&&$('sidebar').classList.contains('open')){$('sidebar').classList.remove('open');return}showMenu()});$('btn-map').addEventListener('click',showMap);$('btn-journal').addEventListener('click',showJournal);$('btn-help').addEventListener('click',showHelp);$('btn-account').addEventListener('click',showAccount);$('btn-room').addEventListener('click',showRoom);
+$('btn-sound').textContent=muted?'×':'♪';$('btn-sound').addEventListener('click',()=>{muted=!muted;localStorage.setItem(SETTINGS_KEY,muted?'mute':'on');$('btn-sound').textContent=muted?'×':'♪';if(!muted)beep(600,.12);toast(muted?'Áudio desligado':'Áudio ativado')});
+for(const btn of document.querySelectorAll('[data-use]'))btn.addEventListener('click',()=>useItem(btn.dataset.use));
+window.addEventListener('keydown',e=>{let tag=document.activeElement?.tagName;if(['INPUT','TEXTAREA'].includes(tag))return;const k=e.key.toLowerCase();if(['arrowup','arrowleft','arrowdown','arrowright',' '].includes(k))e.preventDefault();keys[k]=true;if(e.repeat)return;if(k==='escape'){if(modalOpen)resume();else showMenu()}if(!modalOpen){if(k==='e')interact();if(k===' ' )strike();if(k==='f')strike(true);if(k==='m')showMap();if(k==='j')showJournal();}});
+window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);window.addEventListener('blur',()=>keys={});
+for(const b of document.querySelectorAll('[data-move]')){let key=({up:'w',down:'s',left:'a',right:'d'})[b.dataset.move];const down=e=>{e.preventDefault();keys[key]=true};const up=e=>{e.preventDefault();keys[key]=false};b.addEventListener('pointerdown',down);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('pointerleave',up)}
+$('touch-bag').addEventListener('click',()=>{$('sidebar').classList.toggle('open')});$('close-sidebar').addEventListener('click',()=>{$('sidebar').classList.remove('open')});$('touch-melee').addEventListener('click',()=>strike());$('touch-shoot').addEventListener('click',()=>strike(true));$('touch-interact').addEventListener('click',interact);
+canvas.addEventListener('pointerdown',e=>{$('sidebar').classList.remove('open');if(paused)return;let rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left+camX,y=e.clientY-rect.top+camY;let spot=MISSIONS[s.quest];if(spot&&Math.hypot(spot.x-x,spot.y-y)<55&&distance(s,spot)<110)showQuest();});
 
-  const ENDINGS = {
-    dawn:{title:'Ainda existe amanhã',sub:'FINAL DE ESPERANÇA',text:'O grupo segue as lanternas acesas na praça. As barricadas aguentaram, a confiança manteve as pessoas unidas e o helicóptero consegue recolher os sobreviventes prioritários. Ao amanhecer, Clara vê Porto Cinza desaparecer atrás das nuvens — mas as vozes que ajudou continuam ao seu lado.'},
-    convoy:{title:'O preço de não desistir',sub:'FINAL AGRIDOCE',text:'A transmissão traz ajuda, mas a evacuação é turbulenta. A equipe de resgate consegue retirar parte dos sobreviventes; outros precisam esperar por uma segunda rota. Clara percebe que nenhuma escolha salvaria todo mundo. Mesmo assim, sua decisão deu ao abrigo uma chance real.'},
-    promise:{title:'A promessa cumprida',sub:'FINAL DE NINA',text:'Clara e Nina chegam à zona de resgate antes que a passagem seja fechada. A garota segura o bilhete da mãe, agora enrugado pelas mãos trêmulas. Não sabem quem ainda está vivo, mas o socorro finalmente responde. Pela primeira vez desde o início do surto, Nina consegue dormir.'},
-    alone:{title:'Uma voz só',sub:'FINAL SOLITÁRIO',text:'Clara sai da cidade pelo corredor autorizado e deixa o abrigo para trás. Sobreviveu. O rádio continua emitindo chamadas por muitas horas. Na segurança do perímetro externo, a pergunta é mais difícil que qualquer ferimento: teria sido possível voltar?'},
-    shelter:{title:'A noite não terminou',sub:'FINAL DA RESISTÊNCIA',text:'Sem um sinal de resgate, Clara retorna ao ginásio. Sofia organiza turnos de vigia, e os sobreviventes se sentam juntos no escuro. Ninguém promete salvação. A cidade lá fora parece morta, mas ainda existe uma comunidade disposta a resistir.'},
-    shadow:{title:'Fora do mapa',sub:'FINAL DE SOBREVIVÊNCIA',text:'Sem contato com o exterior, Clara encontra uma saída por túneis de serviço. Atravessa horas de escuridão e alcança a rodovia ao amanhecer. Não há certeza de onde ficará segura. Há apenas o som dos próprios passos.'},
-    fallen:{title:'O último chamado',sub:'FINAL DE DERROTA',text:'A jornada termina antes de alcançar a segurança. Seu rádio continua repetindo estática entre os escombros. Em Porto Cinza, cada recurso e cada decisão importavam.'}
-  };
-
-  let state = null;
-  let activeTab = 'map';
-  let toastTimeout = null;
-  const $ = (id) => document.getElementById(id);
-  const clamp = (value, lo, hi) => Math.max(lo, Math.min(hi, value));
-  const two = (value) => String(value).padStart(2, '0');
-  const nowClock = () => {
-    const mins = Number(state.minutes) || 220;
-    return `DIA ${two(Math.floor(mins / 1440) + 1)} · ${two(Math.floor(mins % 1440 / 60))}:${two(mins % 60)}`;
-  };
-  function fresh() {
-    return {v:VERSION, scene:'inicio', minutes:220, health:86, infection:6, noise:15, food:2, meds:1, parts:0, ammo:2, trust:0, flags:[], history:[{time:'DIA 01 · 03:40',message:'Porto Cinza entrou em colapso.'}], ending:null, choices:0};
-  }
-  function read(key) {try {return localStorage.getItem(key)} catch {return null}}
-  function store(key, value) {try {localStorage.setItem(key,value);return true} catch {return false}}
-  function validSave(obj) {
-    return obj && obj.v===VERSION && (Object.prototype.hasOwnProperty.call(scenes,obj.scene) || obj.scene==='fim') &&
-      typeof obj.health==='number' && Number.isFinite(obj.health) && Array.isArray(obj.flags) && Array.isArray(obj.history) &&
-      typeof obj.minutes==='number' && Number.isFinite(obj.minutes) && (obj.scene!=='fim'||Object.prototype.hasOwnProperty.call(ENDINGS,obj.ending));
-  }
-  function saved() {try {const obj=JSON.parse(read(SAVE_KEY));return validSave(obj)?obj:null} catch {return null}}
-  function save() {const ok=store(SAVE_KEY,JSON.stringify(state));$('save-status').textContent=ok?'PROGRESSO SALVO':'SEM SALVAMENTO';}
-  function note(message) {state.history.push({time:nowClock(),message});state.history=state.history.slice(-40)}
-  function setWelcome() {$('welcome').hidden=false;$('app').hidden=true;$('continue-btn').hidden=!saved();}
-  function newGame() {state=fresh();activeTab='map';save();showGame();toast('Campanha iniciada. Boa sorte, Clara.');}
-  function resume() {state=saved();if(!state){newGame();return;}showGame();toast('Progresso restaurado.');}
-  function showGame() {$('welcome').hidden=true;$('app').hidden=false;switchTab(activeTab);render();window.scrollTo({top:0,behavior:'instant'});}
-  function showHelp() {$('modal').hidden=false;$('close-modal').focus();}
-  function closeHelp() {$('modal').hidden=true;}
-  function toast(message) {const el=$('toast');el.textContent=message;el.hidden=false;if(toastTimeout)clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>{el.hidden=true;},2600);}
-  function requirements(c) {
-    const missing=[];
-    for(const [key,value] of Object.entries(c.need||{}))if((state[key]||0)<value)missing.push(`${value} ${names[key]||key}`);
-    for(const flag of c.needFlags||[])if(!state.flags.includes(flag))missing.push(flag==='nina'?'resgatar Nina':flag==='frequency'?'código da Defesa Civil':flag==='power'?'restaurar energia':flag);
-    return missing;
-  }
-  function recordEnding(key) {
-    let all=[];try {const parsed=JSON.parse(read(ENDINGS_KEY));if(Array.isArray(parsed))all=parsed.filter(k=>Object.prototype.hasOwnProperty.call(ENDINGS,k));} catch {}
-    if(!all.includes(key))all.push(key);
-    store(ENDINGS_KEY,JSON.stringify(all));
-  }
-  function conclude(mode) {
-    if(mode==='solo')return state.flags.includes('signal')?'alone':'shadow';
-    if(mode==='nina')return state.flags.includes('signal')?'promise':'shadow';
-    if(!state.flags.includes('signal'))return 'shelter';
-    if(state.trust>=3 && (state.flags.includes('fortified')||state.flags.includes('treated')||state.flags.includes('helped')) && !state.flags.includes('weakSignal'))return 'dawn';
-    return 'convoy';
-  }
-  function choose(c,index) {
-    if(!state||state.scene==='fim'||requirements(c).length)return;
-    const scene=scenes[state.scene];if(!scene||!scene.choices.includes(c))return;
-    for(const [key,value] of Object.entries(c.delta||{})) {
-      if(!Object.prototype.hasOwnProperty.call(names,key))continue;
-      const updated=(Number(state[key])||0)+value;
-      state[key]=['health','infection','noise'].includes(key)?clamp(updated,0,100):key==='trust'?clamp(updated,-5,8):clamp(updated,0,99);
-    }
-    for(const flag of c.set||[])if(!state.flags.includes(flag))state.flags.push(flag);
-    state.minutes+=c.minutes||0;state.choices+=1;
-    note(c.log||`Decisão ${index+1}: ${c.label}`);
-    // Uma ameaça acima de 75 atrai infectados a cada nova ação com ruído.
-    if(state.noise>=75 && (c.delta?.noise||0)>0){
-      state.health=clamp(state.health-9,0,100);
-      state.infection=clamp(state.infection+4,0,100);
-      note('O ruído atraiu infectados: −9 saúde e +4 infecção.');
-    }
-    if(state.health<=0||state.infection>=100){state.scene='fim';state.ending='fallen';note('A campanha terminou antes da evacuação.');recordEnding('fallen');}
-    else if(c.finish){state.scene='fim';state.ending=conclude(c.finish);recordEnding(state.ending);note('Fim do capítulo 01.');}
-    else {state.scene=c.to;}
-    save();render();window.scrollTo({top:0,behavior:'smooth'});
-  }
-  function useKit() {
-    if(!state||state.scene==='fim'||state.meds<1||(state.health>=100&&state.infection===0))return;
-    state.meds-=1;
-    state.health=clamp(state.health+25,0,100);
-    state.infection=clamp(state.infection-12,0,100);
-    state.minutes+=10;
-    state.noise=clamp(state.noise+4,0,100);
-    note('Usou um kit médico: recuperou saúde e reduziu a infecção.');
-    save();render();toast('Kit médico utilizado: +25 saúde / −12 infecção.');
-  }
-  function render() {
-    if(!state)return;
-    const isEnd=state.scene==='fim';
-    const scene=isEnd?{act:7,zone:'torre',region:'FIM DO CAPÍTULO',location:'PORTO CINZA / EPÍLOGO',title:ENDINGS[state.ending].title,text:[ENDINGS[state.ending].text],choices:[]}:scenes[state.scene];
-    const act=Math.min(scene.act,missions.length-1);
-    $('act-badge').textContent=isEnd?'CAPÍTULO CONCLUÍDO':`MISSÃO ${two(scene.act+1)} / 07`;
-    $('location-title').textContent=scene.location;
-    $('scene-zone-label').textContent=scene.region;
-    $('scene-visual-status').textContent=isEnd?'TRANSMISSÃO ENCERRADA':state.flags.includes('signal')?'SINAL ESTABELECIDO':'SINAL INTERMITENTE';
-    $('scene-visual').dataset.zone=scene.zone;
-    $('scene-visual').classList.toggle('ended',isEnd);
-    $('clock').textContent=nowClock();
-    const percent=isEnd?100:Math.round(scene.act / 7*100);
-    $('progress-fill').style.width=`${percent}%`;
-    $('progress-label').textContent=`${percent}% DA CAMPANHA`;
-    $('scene-index-label').textContent=isEnd?'EPÍLOGO / CAPÍTULO 01':`REGISTRO ${String(state.choices+1).padStart(3,'0')}`;
-    $('scene-title').textContent=scene.title;
-    const textContainer=$('scene-text');textContainer.replaceChildren();
-    scene.text.forEach(s=>{const p=document.createElement('p');p.textContent=s;textContainer.append(p)});
-    const dialogue=$('dialogue');dialogue.hidden=!scene.dialogue||isEnd;
-    if(scene.dialogue){$('dialogue-speaker').textContent=scene.dialogue[0];$('dialogue-text').textContent=scene.dialogue[1]}
-    $('story-card').classList.toggle('ended',isEnd);
-    const choices=$('choices');choices.replaceChildren();
-    if(isEnd){
-      const end=ENDINGS[state.ending];const box=document.createElement('div');box.className='ending';
-      const b=document.createElement('b');b.textContent=end.sub;box.append(b);
-      const p=document.createElement('p');let endings=[];try {endings=JSON.parse(read(ENDINGS_KEY))||[]}catch{}p.textContent=`Finais encontrados: ${endings.length} de ${Object.keys(ENDINGS).length}. Suas decisões foram registradas neste navegador.`;box.append(p);choices.append(box);
-      const restart=document.createElement('button');restart.className='primary big';restart.textContent='REJOGAR E FAZER OUTRAS ESCOLHAS ↗';restart.addEventListener('click',()=>{if(window.confirm('Reiniciar esta campanha? Seu final descoberto continuará registrado.'))newGame()});choices.append(restart);
-      const home=document.createElement('button');home.className='ghost';home.textContent='VOLTAR AO MENU';home.addEventListener('click',setWelcome);choices.append(home);
-    } else {
-      scene.choices.forEach((choice,i)=>{
-        const missing=requirements(choice);
-        const button=document.createElement('button');button.type='button';button.className='choice';button.disabled=missing.length>0;
-        button.setAttribute('aria-label',`${i+1}. ${choice.label}. ${missing.length?'Requer '+missing.join(', '):choice.info||''}`);
-        const num=document.createElement('span');num.className='choice-num';num.textContent=i+1;
-        const label=document.createElement('span');const main=document.createElement('span');main.className='choice-label';main.textContent=choice.label;const desc=document.createElement('span');desc.className='choice-short';desc.textContent=missing.length?`BLOQUEADO: requer ${missing.join(', ')}`:choice.desc;label.append(main,desc);
-        const info=document.createElement('span');info.className='choice-effect';info.textContent=missing.length?'INDISPONÍVEL':choice.info||'CONTINUAR →';
-        button.append(num,label,info);button.addEventListener('click',()=>choose(choice,i));choices.append(button);
-      });
-    }
-    $('health-value').textContent=`${state.health} / 100`;
-    $('infection-value').textContent=`${state.infection} / 100`;
-    $('noise-value').textContent=`${state.noise} / 100`;
-    $('health-bar').style.width=`${state.health}%`;
-    $('infection-bar').style.width=`${state.infection}%`;
-    $('noise-bar').style.width=`${state.noise}%`;
-    ['food','meds','parts','ammo'].forEach(k=>{$(`${k}-value`).textContent=two(state[k]||0)});
-    $('use-med-btn').disabled=isEnd||state.meds<1||(state.health>=100&&state.infection===0);
-    $('trust-value').textContent=state.trust>=4?'MUITO ALTA':state.trust>=2?'ALTA':state.trust>=1?'POSITIVA':state.trust===0?'NEUTRA':'BAIXA';
-    $('risk-label').textContent=state.health<30||state.infection>60||state.noise>70?'RISCO CRÍTICO':state.health<55||state.infection>35||state.noise>45?'RISCO ELEVADO':'RISCO MODERADO';
-    $('mission-title').textContent=isEnd?'CAMPANHA CONCLUÍDA':missions[act][0];
-    $('mission-description').textContent=isEnd?'Você chegou a um dos desfechos do primeiro capítulo. Rejogue para encontrar outros.':missions[act][1];
-    document.querySelector('.mission-status').textContent=isEnd?'● FINAL ALCANÇADO':'● EM ANDAMENTO';
-    for(const [i,zone] of zones.entries()){
-      const node=document.querySelector(`.map-node[data-zone="${zone}"]`);
-      if(node){node.classList.toggle('active',zone===scene.zone);node.classList.toggle('visited',i<zones.indexOf(scene.zone));}
-    }
-    renderPack();renderJournal();
-  }
-  function renderPack() {
-    const box=$('pack-list');box.replaceChildren();
-    const list=[['Alimentos',state.food],['Kits médicos',state.meds],['Ferramentas',state.parts],['Munição',state.ammo],['Código de emergência',state.flags.includes('frequency')?'ENCONTRADO':'—'],['Rede de energia',state.flags.includes('power')?'ATIVA':'DESATIVADA'],['Nina',state.flags.includes('nina')?'RESGATADA':'NÃO RESGATADA']];
-    for(const [label,value] of list){const li=document.createElement('li');const span=document.createElement('span');span.textContent=label;const b=document.createElement('b');b.textContent=typeof value==='number'?two(value):value;li.append(span,b);box.append(li);}
-  }
-  function renderJournal() {
-    const box=$('journal-list');box.replaceChildren();
-    [...state.history].reverse().slice(0,12).forEach(rec=>{const li=document.createElement('li');const time=document.createElement('time');time.textContent=String(rec.time).slice(0,35);const message=document.createElement('span');message.textContent=String(rec.message).slice(0,250);li.append(time,message);box.append(li)});
-  }
-  function switchTab(tab) {
-    if(!['map','pack','journal'].includes(tab))tab='map';activeTab=tab;
-    for(const name of ['map','pack','journal']){const active=name===tab;$(`tab-${name}`).hidden=!active;$(`tabbtn-${name}`).classList.toggle('active',active);$(`tabbtn-${name}`).setAttribute('aria-selected',String(active));}
-  }
-  function bind() {
-    $('start-btn').addEventListener('click',()=>{if(saved() && !window.confirm('Uma nova campanha substituirá o progresso atual. Continuar?'))return;newGame();});
-    $('continue-btn').addEventListener('click',resume);
-    $('intro-help').addEventListener('click',showHelp);
-    $('help-btn').addEventListener('click',showHelp);
-    $('close-modal').addEventListener('click',closeHelp);
-    $('got-it').addEventListener('click',closeHelp);
-    $('exit-btn').addEventListener('click',setWelcome);
-    $('use-med-btn').addEventListener('click',useKit);
-    $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeHelp();});
-    document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
-    document.addEventListener('keydown',event=>{
-      if(event.key==='Escape'&&!$('modal').hidden){closeHelp();return;}
-      if(!$('modal').hidden||$('app').hidden||!state||state.scene==='fim'||event.ctrlKey||event.altKey||event.metaKey)return;
-      const index=Number(event.key)-1;
-      if(Number.isInteger(index)&&index>=0&&index<=3){const scene=scenes[state.scene];const choice=scene?.choices[index];if(choice&&!requirements(choice).length)choose(choice,index);}
-    });
-  }
-  bind();setWelcome();
-  // Exposto apenas para testes locais da V1 (sem dependências de servidor).
-  if(typeof window!=='undefined')window.__UT_TEST__={scenes,missions,ENDINGS,requirements,conclude,getState:()=>state,newGame,choose,saved};
+new ResizeObserver(resize).observe(canvas);
+function frame(t){let dt=Math.min(48,t-(last||t));last=t;now=t;tick(dt);draw();requestAnimationFrame(frame)}
+initWorld();renderLog();updateHUD();resize();showIntro();requestAnimationFrame(frame);checkSession();
 })();

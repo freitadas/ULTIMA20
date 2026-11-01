@@ -1,35 +1,36 @@
-# Validação — ÚLTIMA TRANSMISSÃO V1.0
+# VALIDAÇÃO — ÚLTIMA TRANSMISSÃO V4.0
 
-## Execução de testes
+## Testes executados (neste ambiente)
 
-Data de preparação: 31/10/2026.
+- `node --check game.js` → sem erros sintáticos.
+- `node --check worker.js` → sem erros sintáticos.
+- Chromium headless + Playwright com HTML/CSS/JS injetados em página de teste isolada, pois navegação para URLs e `file://` estava bloqueada pelo ambiente.
+- Inicialização do jogo e fluxo de escolha para iniciar campanha: aprovado.
+- Movimentação WASD e interação espacial (E) no Hospital Municipal: aprovado.
+- Três alternativas da missão inicial disponíveis; seleção move missão 1 para missão 2: aprovado.
+- Tela de mapa, diário e menu cooperativo: aberto sem erros JavaScript.
+- Layout desktop 1440×900 e layout mobile 390×844: renderizado sem transbordamento horizontal no teste.
+- Simulação da sequência completa das 10 missões com decisões e recursos compatíveis: avançou até a missão 10 e registrou o desfecho **AMANHECER COLETIVO** sem erros de JavaScript.
+- Teste isolado do Durable Object com dois participantes simulados: votação 1/2, resolução de empate, persistência dos votos após nova instância e histórico de missões: aprovado. `GET /api/health` simulado: aprovado.
+- Build de assets (`node build.mjs`) e verificação de que `dist/` contém somente `index.html`, `styles.css` e `game.js`: aprovado.
+- Teste de sincronia e persistência com Cloudflare real: **NÃO EXECUTADO** (sem D1/DO publicado neste ambiente).
+- Teste ponta a ponta real de cadastro, login e coop: **NÃO EXECUTADO**. A sintaxe foi verificada, mas o comportamento em produção depende do deployment e das bindings da Cloudflare.
 
-Os fluxos de interface foram exercitados em Chromium por automação Playwright, com HTML/CSS/JavaScript carregados diretamente na página de teste. Para testar persistência nesse ambiente isolado, `localStorage` foi simulado em memória. **Não houve teste em uma implantação real da Cloudflare nem verificação de gravação persistente em um domínio HTTP real.**
+## Regressões e limitações conhecidas
 
-## Resultados
+- Os controles móveis permitem acessar mochila pelo botão **MOCHILA**; a área do jogo em celular é menor e não mostra o painel permanentemente.
+- O algoritmo local desenha mapa e zumbis em Canvas; a qualidade do desempenho depende do aparelho, e não foi medida em múltiplos modelos de celulares.
+- Ataques de zumbis são processados localmente, sem confirmação autoritativa do servidor em coop.
+- D1 `database_id` precisa ser preenchido antes do deploy Worker, e a base SQL precisa ser inicializada.
+- Conquistas não são atestadas pelo servidor; são exibidas conforme o save da campanha.
 
-| Caso | Resultado |
-|---|---|
-| Tela de título e início de nova campanha | PASSOU |
-| Sequência de todas as missões até o epílogo | PASSOU |
-| Salvamento e restauração simulada de estado | PASSOU |
-| Sete epílogos alcançáveis por percursos distintos | PASSOU |
-| Ações com requisitos de recursos e descoberta | PASSOU |
-| Uso de kit médico: custo, cura e redução de infecção | PASSOU |
-| Contador de epílogos descobertos | PASSOU |
-| Menu, modal de ajuda e fechamento por Escape | PASSOU |
-| Sem exceções JavaScript durante os fluxos automatizados | PASSOU |
-| Layout testado em 1440×900 e 390×844 | PASSOU |
-| Estouro horizontal de layout em 390 px | NÃO DETECTADO |
-| Publicação real via GitHub/Cloudflare Pages | NÃO EXECUTADA |
-| Persistência real após recarga HTTP em navegador comum | PENDENTE DE TESTE MANUAL |
+## Critérios para homologação online posterior
 
-## Testes manuais sugeridos após publicação
-
-1. Iniciar campanha; selecionar a frequência de emergência; recarregar a página; usar **Continuar história**.
-2. Seguir até o abrigo sem ferramentas e verificar se a opção **Reforçar barricadas** fica bloqueada.
-3. Usar um kit médico e verificar saúde, infecção, inventário e horário.
-4. Finalizar a campanha, reiniciar, escolher caminho diferente e verificar contador de finais encontrados.
-5. Testar em Android, iPhone, Windows e navegadores principais.
-
-Nenhuma conta remota, servidor de partidas ou multiplayer foi testado ou incluído nesta V1.0.
+1. `GET /api/health` retorna `database:true`, `rooms:true`.
+2. Cadastrar usuário, fazer login, salvar campanha, encerrar sessão, relogar e recuperar progresso.
+3. Dois navegadores distintos entram na mesma sala e veem o outro jogador se movimentar.
+4. Os dois votam na mesma missão: o Durable Object divulga um único resultado e avança o capítulo em ambos.
+5. Um novo integrante entra numa sala com histórico: obtém a missão correta.
+6. Quinto jogador é recusado; IDs de sala malformados e operações API sem origem correta são rejeitados.
+7. Sala não autoriza escolhas de missões fora da progressão.
+8. Versão mobile e Desktop publicada carregam os mesmos arquivos e não apresentam falhas nos controles.
